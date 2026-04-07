@@ -1,0 +1,3286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>FrogFlow · TCU Club Sports</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ─── TOKENS ─────────────────────────────────── */
+:root{
+  --p:#4d1979; --p2:#3a125e; --p3:#6b35a8; --p-soft:#f4edfb; --p-mid:rgba(77,25,121,.12);
+  --gold:#c8a430;
+  --ink:#0f0f14; --ink2:#3d3d52; --ink3:#8888a0;
+  --surface:#ffffff; --bg:#f7f5fb; --border:rgba(15,15,20,.08);
+  --green:#0e7a6e; --green-bg:#edfaf7; --green-bd:rgba(14,122,110,.2);
+  --amber:#c47b0a; --amber-bg:#fef9ee; --amber-bd:rgba(196,123,10,.2);
+  --red:#c0242b; --red-bg:#fef0f0; --red-bd:rgba(192,36,43,.2);
+  --r:14px; --r2:10px; --r3:20px; --r4:28px;
+  --font:'Figtree',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  --sidebar-w:220px; --topbar-h:60px;
+  --ease:cubic-bezier(.25,.46,.45,.94);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);-webkit-font-smoothing:antialiased}
+body{font-family:var(--font);color:var(--ink);display:flex;flex-direction:column;}
+
+/* ─── TOPBAR ─────────────────────────────────── */
+.topbar{
+  background:linear-gradient(135deg,var(--p2) 0%,var(--p) 55%,var(--p3) 100%);
+  color:#fff;position:fixed;top:0;left:0;right:0;z-index:100;
+  height:var(--topbar-h);
+  box-shadow:0 2px 20px rgba(58,18,94,.35);
+}
+.topbar-inner{
+  display:flex;align-items:center;justify-content:space-between;height:100%;
+  padding:0 20px;gap:12px;
+}
+.wordmark{
+  display:flex;align-items:center;gap:10px;
+}
+.frog-icon{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.06));
+  border:1px solid rgba(255,255,255,.18);
+  display:grid;place-items:center;font-size:17px;
+}
+.wordmark h1{
+  font-size:18px;font-weight:800;color:#fff;letter-spacing:-.3px;
+}
+.wordmark .club-name{
+  font-size:11px;color:rgba(255,255,255,.6);font-weight:500;margin-top:1px;
+}
+.role-chip{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);
+  border-radius:999px;padding:6px 10px 6px 8px;cursor:pointer;
+}
+.role-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;flex-shrink:0}
+.role-dot.staff{background:var(--gold)}
+.role-chip select{
+  background:transparent;border:none;color:#fff;font-family:var(--font);
+  font-size:12px;font-weight:600;outline:none;appearance:none;cursor:pointer;
+}
+.role-chip select option{color:var(--ink);background:#fff}
+
+/* ─── APP SHELL ──────────────────────────────── */
+.app-shell{
+  display:flex;
+  padding-top:var(--topbar-h);
+  height:100vh;
+  overflow:hidden;
+}
+
+/* ─── SIDEBAR NAV ────────────────────────────── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:#fff;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  padding:16px 10px;overflow-y:auto;
+  position:fixed;top:var(--topbar-h);bottom:0;left:0;
+  z-index:50;
+}
+.sidebar::-webkit-scrollbar{display:none}
+.sidebar-section{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);padding:0 10px;margin:14px 0 6px;}
+.sidebar-section:first-child{margin-top:0}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:var(--r2);cursor:pointer;border:none;
+  background:transparent;color:var(--ink2);font-family:var(--font);
+  font-size:14px;font-weight:600;width:100%;text-align:left;
+  transition:.13s var(--ease);position:relative;margin-bottom:2px;
+}
+.nav-item:hover{background:var(--p-soft);color:var(--p)}
+.nav-item.active{background:var(--p-soft);color:var(--p);font-weight:700}
+.nav-item .nav-icon{font-size:18px;line-height:1;flex-shrink:0;width:24px;text-align:center}
+.nav-item .nav-label{flex:1}
+.nav-badge{
+  background:var(--red);color:#fff;font-size:10px;font-weight:800;
+  min-width:18px;height:18px;border-radius:999px;
+  display:grid;place-items:center;padding:0 4px;
+}
+
+/* ─── MAIN CONTENT ───────────────────────────── */
+.main-content{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  margin-left:var(--sidebar-w);
+  background:var(--bg);
+}
+.main-content::-webkit-scrollbar{width:6px}
+.main-content::-webkit-scrollbar-track{background:transparent}
+.main-content::-webkit-scrollbar-thumb{background:rgba(77,25,121,.15);border-radius:999px}
+
+/* ─── MOBILE BOTTOM NAV (≤768px) ─────────────── */
+.bottom-nav{display:none}
+@media(max-width:768px){
+  .sidebar{display:none}
+  .main-content{margin-left:0}
+  .bottom-nav{
+    display:flex;position:fixed;bottom:0;left:0;right:0;
+    height:60px;background:rgba(255,255,255,.95);
+    backdrop-filter:blur(16px);border-top:1px solid var(--border);
+    z-index:50;padding:0 4px;
+  }
+  .nav-item{
+    flex:1;flex-direction:column;gap:2px;padding:6px 4px;
+    font-size:10px;font-weight:700;letter-spacing:.2px;text-transform:uppercase;
+    align-items:center;justify-content:center;
+  }
+  .nav-item .nav-icon{font-size:20px;width:auto}
+  .main-content{padding-bottom:68px}
+}
+
+/* ─── PAGE SECTIONS ──────────────────────────── */
+.page{
+  padding:24px 28px 40px;
+  max-width:1100px;
+  animation:pageIn .22s var(--ease);
+}
+@keyframes pageIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* Desktop two-column layout for home quick actions */
+@media(min-width:900px){
+  .home-grid{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start}
+  .greeting{margin-bottom:0}
+  .qa-grid{grid-template-columns:1fr 1fr}
+  .kpi-row-desktop{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+  .roster-layout{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
+  .budget-layout{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start}
+  .requests-layout{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
+}
+
+/* ─── GREETING BANNER ────────────────────────── */
+.greeting{
+  background:linear-gradient(135deg,var(--p2) 0%,var(--p) 55%,var(--p3) 100%);
+  border-radius:var(--r3);padding:20px;margin-bottom:16px;
+  position:relative;overflow:hidden;
+}
+.greeting::before{
+  content:'';position:absolute;right:-20px;top:-30px;
+  width:140px;height:140px;border-radius:50%;
+  background:rgba(255,255,255,.06);
+}
+.greeting::after{
+  content:'';position:absolute;right:20px;bottom:-40px;
+  width:100px;height:100px;border-radius:50%;
+  background:rgba(255,255,255,.04);
+}
+.greeting-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:14px}
+.greeting h2{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.3px;line-height:1.2}
+.greeting .sub{font-size:13px;color:rgba(255,255,255,.65);margin-top:3px;font-weight:500}
+.greeting-stats{display:flex;gap:10px}
+.gstat{
+  flex:1;background:rgba(255,255,255,.12);border-radius:var(--r2);
+  padding:10px;text-align:center;backdrop-filter:blur(4px);
+}
+.gstat .gv{font-size:22px;font-weight:900;color:#fff}
+.gstat .gl{font-size:10px;color:rgba(255,255,255,.6);font-weight:600;text-transform:uppercase;letter-spacing:.3px;margin-top:1px}
+
+/* ─── SECTION HEADER ─────────────────────────── */
+.sec-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;margin-top:4px;
+}
+.sec-hdr h3{font-size:13px;font-weight:800;color:var(--ink2);text-transform:uppercase;letter-spacing:.6px}
+.sec-hdr button{font-size:13px;font-weight:700;color:var(--p);background:none;border:none;cursor:pointer;padding:2px 0}
+
+/* ─── CARDS ──────────────────────────────────── */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r3);margin-bottom:12px;overflow:hidden;
+  box-shadow:0 2px 12px rgba(77,25,121,.06);
+}
+.card-pad{padding:16px}
+
+/* ─── FEED ITEMS ─────────────────────────────── */
+.feed-item{
+  display:flex;align-items:center;gap:12px;padding:13px 16px;
+  border-bottom:1px solid var(--border);cursor:pointer;
+  transition:.12s var(--ease);
+  background:var(--surface);
+}
+.feed-item:last-child{border-bottom:none}
+.feed-item:active{background:var(--p-soft)}
+.fi-icon{
+  width:40px;height:40px;border-radius:12px;flex-shrink:0;
+  display:grid;place-items:center;font-size:18px;
+}
+.fi-icon.purple{background:var(--p-soft)}
+.fi-icon.green{background:var(--green-bg)}
+.fi-icon.amber{background:var(--amber-bg)}
+.fi-icon.red{background:var(--red-bg)}
+.fi-body{flex:1;min-width:0}
+.fi-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fi-sub{font-size:12px;color:var(--ink3);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fi-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.fi-amt{font-size:14px;font-weight:800;color:var(--ink)}
+.chevron{color:var(--ink3);font-size:16px;font-weight:300}
+
+/* ─── STATUS BADGES ──────────────────────────── */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;
+}
+.badge.green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+.badge.amber{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bd)}
+.badge.red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
+.badge.purple{background:var(--p-soft);color:var(--p);border:1px solid rgba(77,25,121,.2)}
+.badge.gray{background:var(--bg);color:var(--ink2);border:1px solid var(--border)}
+
+/* ─── QUICK ACTION GRID ──────────────────────── */
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.qa-btn{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px 12px;cursor:pointer;
+  transition:.15s var(--ease);text-align:left;
+  box-shadow:0 1px 4px rgba(77,25,121,.04);
+}
+.qa-btn:active{transform:scale(.97);background:var(--p-soft)}
+.qa-btn .qa-ico{font-size:24px;margin-bottom:8px;display:block}
+.qa-btn .qa-lbl{font-size:13px;font-weight:700;color:var(--ink);display:block}
+.qa-btn .qa-sub{font-size:11px;color:var(--ink3);font-weight:500;margin-top:2px;display:block}
+
+/* ─── ANNOUNCEMENT ───────────────────────────── */
+.announce{
+  background:linear-gradient(135deg,var(--p-soft),rgba(255,255,255,.5));
+  border:1px solid rgba(77,25,121,.15);border-radius:var(--r);
+  padding:13px 14px;margin-bottom:10px;
+}
+.announce .ann-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--p);margin-bottom:5px}
+.announce .ann-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.announce .ann-body{font-size:12px;color:var(--ink2);line-height:1.5}
+.announce .ann-meta{font-size:11px;color:var(--ink3);margin-top:6px}
+
+/* ─── EVENT ROW ──────────────────────────────── */
+.event-row{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 16px;border-bottom:1px solid var(--border);
+}
+.event-row:last-child{border-bottom:none}
+.event-date-block{
+  width:42px;text-align:center;flex-shrink:0;
+}
+.event-date-block .eday{font-size:20px;font-weight:900;color:var(--p);line-height:1}
+.event-date-block .emon{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--ink3);letter-spacing:.3px}
+.event-info{flex:1;min-width:0}
+.event-title{font-size:13px;font-weight:700;color:var(--ink)}
+.event-meta{font-size:11px;color:var(--ink3);margin-top:2px}
+.event-type-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+}
+
+/* ─── BUDGET BARS ────────────────────────────── */
+.budget-card{padding:16px}
+.fund-row{margin-bottom:16px}
+.fund-row:last-child{margin-bottom:0}
+.fund-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px}
+.fund-label{font-size:12px;font-weight:700;color:var(--ink2)}
+.fund-amount{font-size:20px;font-weight:900;color:var(--ink)}
+.fund-sub{font-size:11px;color:var(--ink3);margin-top:1px}
+.bar-track{height:8px;background:var(--bg);border-radius:999px;overflow:hidden;margin-top:8px}
+.bar-fill{height:100%;border-radius:999px;transition:width .6s var(--ease)}
+.bar-fill.op{background:linear-gradient(90deg,var(--green),#34d399)}
+.bar-fill.re{background:linear-gradient(90deg,var(--p),var(--p3))}
+.bar-fill.danger{background:linear-gradient(90deg,var(--red),#f87171)}
+
+/* ─── ROSTER ─────────────────────────────────── */
+.player-row{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 16px;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:.12s var(--ease);
+}
+.player-row:last-child{border-bottom:none}
+.player-row:active{background:var(--p-soft)}
+.avatar{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--p),var(--p3));
+  color:#fff;font-weight:800;font-size:13px;
+  display:grid;place-items:center;flex-shrink:0;
+}
+.player-info{flex:1;min-width:0}
+.player-name{font-size:14px;font-weight:700;color:var(--ink)}
+.player-meta{font-size:12px;color:var(--ink3);margin-top:1px}
+.elig-dot{
+  width:10px;height:10px;border-radius:50%;flex-shrink:0;
+}
+.elig-dot.eligible{background:var(--green)}
+.elig-dot.pending{background:var(--amber)}
+.elig-dot.ineligible{background:var(--red)}
+
+/* ─── FORMS ──────────────────────────────────── */
+.form-section{padding:0 0 16px}
+.form-label{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px;margin-top:14px}
+.form-input{
+  width:100%;padding:12px 14px;border-radius:var(--r);
+  border:1.5px solid var(--border);background:#fff;
+  font-family:var(--font);font-size:14px;color:var(--ink);outline:none;
+  transition:.15s var(--ease);
+}
+.form-input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(77,25,121,.1)}
+textarea.form-input{min-height:90px;resize:vertical}
+.form-hint{font-size:11px;color:var(--ink3);margin-top:5px;line-height:1.5}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ─── TYPE SELECTOR ──────────────────────────── */
+.type-scroll{
+  display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:4px;
+}
+.type-scroll::-webkit-scrollbar{display:none}
+.type-chip{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:10px 14px;border-radius:var(--r);border:2px solid var(--border);
+  background:#fff;cursor:pointer;transition:.15s var(--ease);flex-shrink:0;min-width:76px;
+}
+.type-chip.sel{border-color:var(--p);background:var(--p-soft)}
+.type-chip .tc-ico{font-size:22px}
+.type-chip .tc-lbl{font-size:11px;font-weight:700;color:var(--ink2);text-align:center}
+.type-chip.sel .tc-lbl{color:var(--p)}
+
+/* ─── BUTTONS ────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:13px 20px;border-radius:var(--r);border:none;
+  font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;
+  transition:.15s var(--ease);width:100%;
+}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--p);color:#fff;box-shadow:0 4px 16px rgba(77,25,121,.3)}
+.btn.primary:active{background:var(--p2)}
+.btn.secondary{background:var(--p-soft);color:var(--p);border:1.5px solid rgba(77,25,121,.2)}
+.btn.ghost{background:var(--bg);color:var(--ink2);border:1.5px solid var(--border)}
+.btn.danger{background:var(--red-bg);color:var(--red);border:1.5px solid var(--red-bd)}
+.btn.success{background:var(--green-bg);color:var(--green);border:1.5px solid var(--green-bd)}
+.btn.success{background:var(--green-bg);color:var(--green);border:1.5px solid var(--green-bd)}
+.btn.sm{padding:9px 14px;font-size:13px;width:auto}
+.btn-group{display:flex;gap:8px}
+.btn-group .btn{flex:1}
+
+/* ─── SHEET ──────────────────────────────────── */
+.sheet-bg{
+  position:fixed;inset:0;background:rgba(10,5,20,.55);
+  backdrop-filter:blur(6px);z-index:150;display:none;
+  align-items:center;justify-content:center;
+}
+.sheet-bg.open{display:flex}
+.sheet{
+  background:#fff;border-radius:var(--r3);
+  width:min(640px,95vw);max-height:88vh;overflow:hidden;
+  display:flex;flex-direction:column;
+  animation:shIn .22s var(--ease);
+  box-shadow:0 20px 60px rgba(77,25,121,.22);
+}
+@keyframes shIn{from{transform:scale(.96) translateY(8px);opacity:0}to{transform:none;opacity:1}}
+.sheet-handle{display:none}
+@media(max-width:768px){
+  .sheet-bg{align-items:flex-end}
+  .sheet{width:100%;border-radius:var(--r4) var(--r4) 0 0;max-height:92vh}
+  .sheet-handle{display:block;width:36px;height:4px;border-radius:999px;background:var(--border);margin:10px auto 0}
+}
+.sheet-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px 12px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.sheet-hdr h3{font-size:16px;font-weight:800;color:var(--ink)}
+.sheet-close{
+  width:30px;height:30px;border-radius:999px;background:var(--bg);
+  border:none;cursor:pointer;font-size:16px;color:var(--ink2);
+  display:grid;place-items:center;font-weight:700;
+}
+.sheet-body{overflow-y:auto;padding:16px 18px 32px;flex:1}
+.sheet-body::-webkit-scrollbar{display:none}
+
+/* ─── DETAIL VIEW ────────────────────────────── */
+.detail-hero{
+  background:linear-gradient(135deg,var(--p2),var(--p));
+  border-radius:var(--r);padding:16px;margin-bottom:14px;color:#fff;
+}
+.detail-hero .dh-type{font-size:11px;font-weight:700;opacity:.65;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.detail-hero .dh-title{font-size:18px;font-weight:800;margin-bottom:8px;line-height:1.25}
+.detail-hero .dh-meta{font-size:12px;opacity:.75}
+.detail-row{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:11px 0;border-bottom:1px solid var(--border);font-size:13px;
+}
+.detail-row:last-child{border-bottom:none}
+.detail-key{font-weight:700;color:var(--ink2);width:110px;flex-shrink:0;padding-top:1px}
+.detail-val{color:var(--ink);flex:1;line-height:1.45}
+.info-box{
+  background:var(--bg);border-radius:var(--r2);padding:12px 14px;
+  margin-bottom:12px;
+}
+.info-box.warn{background:var(--amber-bg);border:1px solid var(--amber-bd)}
+.info-box.success{background:var(--green-bg);border:1px solid var(--green-bd)}
+.info-box.danger{background:var(--red-bg);border:1px solid var(--red-bd)}
+.info-box .ib-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.info-box.warn .ib-label{color:var(--amber)}
+.info-box.success .ib-label{color:var(--green)}
+.info-box.danger .ib-label{color:var(--red)}
+.info-box .ib-text{font-size:13px;color:var(--ink2);line-height:1.45}
+
+/* ─── PLAYER PROFILE ─────────────────────────── */
+.player-hero{
+  display:flex;flex-direction:column;align-items:center;
+  padding:20px 0 16px;border-bottom:1px solid var(--border);margin-bottom:16px;text-align:center;
+}
+.player-hero .ph-avatar{
+  width:64px;height:64px;border-radius:50%;font-size:22px;font-weight:800;
+  background:linear-gradient(135deg,var(--p),var(--p3));
+  color:#fff;display:grid;place-items:center;margin-bottom:10px;
+}
+.player-hero h3{font-size:20px;font-weight:800;margin-bottom:3px}
+.player-hero .ph-meta{font-size:13px;color:var(--ink3)}
+
+/* ─── CHECKLIST ──────────────────────────────── */
+.check-item{
+  display:flex;align-items:center;gap:12px;padding:12px 0;
+  border-bottom:1px solid var(--border);
+}
+.check-item:last-child{border-bottom:none}
+.check-circle{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  display:grid;place-items:center;font-size:13px;font-weight:700;
+}
+.check-circle.ok{background:var(--green-bg);color:var(--green);border:1.5px solid var(--green-bd)}
+.check-circle.fail{background:var(--red-bg);color:var(--red);border:1.5px solid var(--red-bd)}
+.check-circle.warn{background:var(--amber-bg);color:var(--amber);border:1.5px solid var(--amber-bd)}
+.check-text{flex:1}
+.check-text strong{font-size:13px;font-weight:700;display:block;margin-bottom:2px}
+.check-text span{font-size:12px;color:var(--ink3)}
+
+/* ─── LEDGER ROWS ────────────────────────────── */
+.ledger-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;border-bottom:1px solid var(--border);
+}
+.ledger-item:last-child{border-bottom:none}
+.ledger-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ledger-dot.credit{background:var(--green)}
+.ledger-dot.debit{background:var(--red)}
+.ledger-body{flex:1;min-width:0}
+.ledger-memo{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ledger-date{font-size:11px;color:var(--ink3);margin-top:1px}
+.ledger-amt{font-weight:800;font-size:14px;flex-shrink:0}
+.ledger-amt.credit{color:var(--green)}
+.ledger-amt.debit{color:var(--red)}
+
+/* ─── CALENDAR STRIP ─────────────────────────── */
+.cal-strip{display:flex;gap:8px;overflow-x:auto;padding:0 16px 0;margin-bottom:14px}
+.cal-strip::-webkit-scrollbar{display:none}
+.cal-day{
+  min-width:50px;border-radius:var(--r);padding:10px 8px;text-align:center;
+  cursor:pointer;border:1.5px solid var(--border);background:#fff;flex-shrink:0;
+  transition:.12s var(--ease);
+}
+.cal-day.today{border-color:var(--p);background:var(--p-soft)}
+.cal-day.has-ev{border-color:rgba(77,25,121,.3)}
+.cal-day .cd-dow{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--ink3)}
+.cal-day .cd-d{font-size:20px;font-weight:900;color:var(--ink);margin:2px 0}
+.cal-day.today .cd-d{color:var(--p)}
+.cal-day .cd-pip{width:5px;height:5px;border-radius:50%;background:var(--p);margin:0 auto}
+
+/* ─── Q&A CHAT ───────────────────────────────── */
+.chat-wrap{display:flex;flex-direction:column;gap:10px;padding:4px 0 16px}
+.bubble{
+  max-width:88%;padding:11px 14px;border-radius:16px;font-size:13px;line-height:1.55;
+}
+.bubble.me{
+  align-self:flex-end;background:var(--p);color:#fff;
+  border-bottom-right-radius:4px;
+}
+.bubble.ai{
+  align-self:flex-start;background:var(--surface);color:var(--ink);
+  border:1px solid var(--border);border-bottom-left-radius:4px;
+}
+.qa-input-row{
+  display:flex;gap:8px;padding:12px 16px;
+  border-top:1px solid var(--border);background:#fff;flex-shrink:0;
+}
+.qa-input-row input{
+  flex:1;padding:11px 14px;border-radius:var(--r);border:1.5px solid var(--border);
+  font-family:var(--font);font-size:13px;outline:none;
+}
+.qa-input-row input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(77,25,121,.1)}
+.qa-send{
+  width:42px;height:42px;border-radius:var(--r);background:var(--p);
+  border:none;cursor:pointer;color:#fff;font-size:18px;
+  display:grid;place-items:center;flex-shrink:0;
+}
+
+/* ─── MISC ───────────────────────────────────── */
+
+/* ─── SEARCH OVERLAY ────────────────────────── */
+.search-overlay{
+  position:fixed;inset:0;background:rgba(10,5,20,.6);
+  backdrop-filter:blur(8px);z-index:250;display:none;
+  align-items:flex-start;justify-content:center;padding-top:min(18vh,140px);
+}
+.search-overlay.open{display:flex}
+.search-box{
+  width:min(560px,92vw);background:#fff;border-radius:var(--r3);
+  box-shadow:0 20px 60px rgba(77,25,121,.3);
+  overflow:hidden;animation:shIn .18s var(--ease);
+}
+.search-input-row{
+  display:flex;align-items:center;gap:10px;padding:16px 18px;
+  border-bottom:1px solid var(--border);
+}
+.search-input-row .si-icon{font-size:20px;color:var(--ink3);flex-shrink:0}
+.search-input-row input{
+  flex:1;border:none;outline:none;font-family:var(--font);
+  font-size:16px;font-weight:600;color:var(--ink);background:transparent;
+}
+.search-input-row input::placeholder{color:var(--ink3);font-weight:500}
+.search-input-row .si-close{
+  width:28px;height:28px;border-radius:var(--r2);background:var(--bg);
+  border:none;cursor:pointer;font-size:14px;color:var(--ink3);
+  display:grid;place-items:center;flex-shrink:0;
+}
+.search-results{max-height:380px;overflow-y:auto;padding:6px 0}
+.search-results::-webkit-scrollbar{display:none}
+.search-result-item{
+  display:flex;align-items:center;gap:12px;padding:11px 18px;
+  cursor:pointer;transition:.1s var(--ease);
+}
+.search-result-item:hover{background:var(--p-soft)}
+.sr-icon{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  display:grid;place-items:center;font-size:16px;background:var(--bg);
+}
+.sr-body{flex:1;min-width:0}
+.sr-title{font-size:14px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sr-sub{font-size:12px;color:var(--ink3);margin-top:1px}
+.sr-tag{
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;
+  padding:3px 8px;border-radius:999px;flex-shrink:0;
+}
+.search-empty{padding:28px 18px;text-align:center;color:var(--ink3);font-size:13px}
+.search-hint{
+  padding:10px 18px;border-top:1px solid var(--border);
+  font-size:11px;color:var(--ink3);display:flex;gap:12px;
+}
+.search-hint kbd{
+  background:var(--bg);border:1px solid var(--border);border-radius:4px;
+  padding:1px 6px;font-family:var(--mono);font-size:10px;font-weight:600;
+}
+
+/* ─── SETTINGS PAGE ─────────────────────────── */
+.settings-avatar{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,var(--p),var(--p3));
+  color:#fff;font-weight:800;font-size:26px;
+  display:grid;place-items:center;margin:0 auto 12px;
+}
+.settings-name{font-size:20px;font-weight:800;text-align:center;margin-bottom:2px}
+.settings-email{font-size:13px;color:var(--ink3);text-align:center;margin-bottom:16px}
+.settings-group{margin-bottom:16px}
+.settings-group-label{
+  font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;
+  color:var(--ink3);margin-bottom:8px;padding:0 2px;
+}
+.settings-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 16px;background:var(--surface);
+  border:1px solid var(--border);border-bottom:none;
+}
+.settings-row:first-of-type{border-radius:var(--r) var(--r) 0 0}
+.settings-row:last-of-type{border-bottom:1px solid var(--border);border-radius:0 0 var(--r) var(--r)}
+.settings-row:only-of-type{border-radius:var(--r);border-bottom:1px solid var(--border)}
+.sr-left{display:flex;align-items:center;gap:10px}
+.sr-left .sr-ico{font-size:18px;width:24px;text-align:center}
+.sr-left .sr-lbl{font-size:14px;font-weight:600;color:var(--ink)}
+.sr-right{font-size:13px;color:var(--ink3);font-weight:500;display:flex;align-items:center;gap:4px}
+
+/* Toggle switch */
+.toggle{
+  width:42px;height:24px;border-radius:999px;
+  background:var(--border);cursor:pointer;
+  position:relative;transition:.2s var(--ease);border:none;flex-shrink:0;
+}
+.toggle.on{background:var(--green)}
+.toggle::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.2s var(--ease);
+}
+.toggle.on::after{left:21px}
+
+/* ─── EXPORT BUTTON ─────────────────────────── */
+.export-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 14px;border-radius:var(--r2);
+  background:var(--bg);border:1.5px solid var(--border);
+  font-family:var(--font);font-size:12px;font-weight:700;
+  color:var(--ink2);cursor:pointer;transition:.15s var(--ease);
+}
+.export-btn:hover{background:var(--p-soft);color:var(--p);border-color:rgba(77,25,121,.2)}
+.export-btn:active{transform:scale(.97)}
+
+/* ─── ANNOUNCEMENT FORM ─────────────────────── */
+.announce-manage-item{
+  display:flex;align-items:flex-start;gap:12px;padding:14px 16px;
+  border-bottom:1px solid var(--border);transition:.12s var(--ease);
+}
+.announce-manage-item:last-child{border-bottom:none}
+.announce-manage-item:hover{background:var(--bg)}
+.ami-body{flex:1;min-width:0}
+.ami-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.ami-preview{font-size:12px;color:var(--ink3);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ami-meta{font-size:11px;color:var(--ink3);margin-top:4px;font-weight:500}
+.ami-actions{display:flex;gap:6px;flex-shrink:0;padding-top:2px}
+.ami-btn{
+  width:30px;height:30px;border-radius:var(--r2);border:1px solid var(--border);
+  background:var(--surface);cursor:pointer;font-size:14px;
+  display:grid;place-items:center;transition:.12s var(--ease);
+}
+.ami-btn:hover{background:var(--bg)}
+.ami-btn.del:hover{background:var(--red-bg);color:var(--red);border-color:var(--red-bd)}
+
+/* ─── FILE UPLOAD ───────────────────────────── */
+.upload-zone{
+  border:2px dashed var(--border);border-radius:var(--r);
+  padding:20px 16px;text-align:center;cursor:pointer;
+  transition:.18s var(--ease);background:var(--bg);position:relative;
+  overflow:hidden;
+}
+.upload-zone:hover{border-color:var(--p);background:var(--p-soft)}
+.upload-zone.dragover{border-color:var(--p);background:var(--p-soft);transform:scale(1.01)}
+.upload-zone .uz-icon{font-size:28px;margin-bottom:6px}
+.upload-zone .uz-text{font-size:13px;font-weight:700;color:var(--ink2)}
+.upload-zone .uz-hint{font-size:11px;color:var(--ink3);margin-top:3px}
+.upload-zone input[type="file"]{
+  position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;
+}
+
+.file-chip{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 12px;border-radius:var(--r2);
+  background:var(--surface);border:1.5px solid var(--border);
+  font-size:13px;font-weight:600;color:var(--ink);
+  margin-top:8px;max-width:100%;
+}
+.file-chip .fc-icon{font-size:16px;flex-shrink:0}
+.file-chip .fc-name{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file-chip .fc-size{font-size:11px;color:var(--ink3);flex-shrink:0}
+.file-chip .fc-remove{
+  width:20px;height:20px;border-radius:50%;border:none;
+  background:var(--bg);cursor:pointer;font-size:12px;
+  display:grid;place-items:center;color:var(--ink3);flex-shrink:0;
+  transition:.12s var(--ease);
+}
+.file-chip .fc-remove:hover{background:var(--red-bg);color:var(--red)}
+
+.upload-btn-inline{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 12px;border-radius:var(--r2);
+  background:var(--p-soft);border:1.5px solid rgba(77,25,121,.18);
+  font-family:var(--font);font-size:12px;font-weight:700;
+  color:var(--p);cursor:pointer;transition:.15s var(--ease);
+  position:relative;overflow:hidden;
+}
+.upload-btn-inline:hover{background:rgba(77,25,121,.15)}
+.upload-btn-inline:active{transform:scale(.97)}
+.upload-btn-inline input[type="file"]{
+  position:absolute;inset:0;opacity:0;cursor:pointer;
+}
+
+/* Profile photo upload */
+.settings-avatar-wrap{
+  position:relative;width:72px;margin:0 auto 12px;
+}
+.settings-avatar-wrap .photo-overlay{
+  position:absolute;inset:0;border-radius:50%;
+  background:rgba(0,0,0,.45);display:grid;place-items:center;
+  opacity:0;transition:.18s var(--ease);cursor:pointer;
+}
+.settings-avatar-wrap:hover .photo-overlay{opacity:1}
+.settings-avatar-wrap .photo-overlay span{color:#fff;font-size:11px;font-weight:700;text-align:center;line-height:1.3}
+.settings-avatar-wrap input[type="file"]{
+  position:absolute;inset:0;opacity:0;cursor:pointer;border-radius:50%;
+}
+.settings-avatar-wrap .avatar-img{
+  width:72px;height:72px;border-radius:50%;object-fit:cover;
+}
+.empty{
+  text-align:center;padding:40px 20px;
+}
+.empty .e-ico{font-size:44px;margin-bottom:10px}
+.empty .e-txt{font-size:15px;font-weight:700;color:var(--ink2);margin-bottom:4px}
+.empty .e-sub{font-size:13px;color:var(--ink3)}
+.divider{height:1px;background:var(--border);margin:12px 0}
+.text-center{text-align:center}
+.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}
+.toast-wrap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:300;pointer-events:none}
+.toast{
+  background:rgba(15,15,20,.88);color:#fff;
+  padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;
+  white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.25);
+  animation:toastIn .2s var(--ease);
+}
+@keyframes toastIn{from{transform:translateY(8px);opacity:0}to{opacity:1;transform:none}}
+
+/* ─── NOTIFICATIONS ──────────────────────────── */
+.notif-btn{
+  position:relative;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);
+  border-radius:999px;width:36px;height:36px;display:grid;place-items:center;
+  cursor:pointer;font-size:18px;flex-shrink:0;
+}
+.notif-pip{
+  position:absolute;top:4px;right:4px;width:9px;height:9px;border-radius:50%;
+  background:var(--red);border:2px solid var(--p2);display:none;
+}
+.notif-pip.show{display:block}
+.notif-panel{
+  position:fixed;top:var(--topbar-h);right:16px;width:min(380px,calc(100vw - 32px));
+  background:#fff;border:1px solid var(--border);border-radius:var(--r3);
+  box-shadow:0 12px 48px rgba(77,25,121,.18);z-index:200;
+  display:none;overflow:hidden;
+  animation:dropIn .18s var(--ease);
+}
+.notif-panel.open{display:block}
+@keyframes dropIn{from{transform:translateY(-8px);opacity:0}to{transform:none;opacity:1}}
+.notif-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;border-bottom:1px solid var(--border);
+}
+.notif-hdr h4{font-size:14px;font-weight:800;color:var(--ink)}
+.notif-hdr button{font-size:12px;font-weight:700;color:var(--p);background:none;border:none;cursor:pointer}
+.notif-item{
+  display:flex;align-items:flex-start;gap:10px;padding:12px 16px;
+  border-bottom:1px solid var(--border);transition:.12s var(--ease);cursor:default;
+}
+.notif-item:last-child{border-bottom:none}
+.notif-item.unread{background:var(--p-soft)}
+.notif-item:hover{background:var(--bg)}
+.notif-icon{
+  width:34px;height:34px;border-radius:10px;flex-shrink:0;
+  display:grid;place-items:center;font-size:16px;
+}
+.notif-body{flex:1;min-width:0}
+.notif-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.notif-sub{font-size:12px;color:var(--ink3);line-height:1.4}
+.notif-time{font-size:11px;color:var(--ink3);margin-top:3px;font-weight:500}
+.notif-empty{padding:28px 16px;text-align:center;color:var(--ink3);font-size:13px}
+
+/* ─── STAFF DASHBOARD ────────────────────────── */
+.club-summary-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px;margin-bottom:10px;
+  box-shadow:0 1px 6px rgba(77,25,121,.05);
+  cursor:pointer;transition:.15s var(--ease);
+}
+.club-summary-card:active{transform:scale(.98)}
+.club-summary-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.club-summary-name{font-size:15px;font-weight:800;color:var(--ink)}
+.club-summary-meta{font-size:12px;color:var(--ink3);margin-top:2px}
+.club-mini-stats{display:flex;gap:8px}
+.cms{
+  flex:1;background:var(--bg);border-radius:var(--r2);padding:8px 10px;text-align:center;
+}
+.cms .cv{font-size:16px;font-weight:900}
+.cms .cl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--ink3);margin-top:1px}
+.health-bar{height:5px;background:var(--bg);border-radius:999px;overflow:hidden;margin-top:8px}
+.health-fill{height:100%;border-radius:999px;transition:width .5s var(--ease)}
+.health-fill.good{background:linear-gradient(90deg,var(--green),#34d399)}
+.health-fill.warn{background:linear-gradient(90deg,var(--amber),#fbbf24)}
+.health-fill.danger{background:linear-gradient(90deg,var(--red),#f87171)}
+.quick-approve-row{
+  display:flex;gap:6px;margin-top:10px;padding-top:10px;
+  border-top:1px solid var(--border);
+}
+.qa-approve{
+  flex:1;padding:8px 10px;border-radius:var(--r2);font-family:var(--font);
+  font-size:12px;font-weight:700;cursor:pointer;border:none;transition:.12s var(--ease);
+}
+.qa-approve.ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+.qa-approve.info{background:var(--bg);color:var(--ink2);border:1px solid var(--border)}
+.qa-approve.bad{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
+
+/* ─── STAFF COMMAND CENTER ───────────────────── */
+.staff-club-selector{
+  background:linear-gradient(135deg,var(--p2) 0%,var(--p) 55%,var(--p3) 100%);
+  border-radius:var(--r3);padding:18px 20px;margin-bottom:16px;
+  position:relative;overflow:hidden;
+}
+.staff-club-selector::before{
+  content:'';position:absolute;right:-20px;top:-30px;
+  width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.06);
+}
+.staff-club-selector .scs-label{
+  font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;
+  color:rgba(255,255,255,.55);margin-bottom:8px;
+}
+.staff-club-selector select{
+  width:100%;padding:12px 16px;border-radius:var(--r);
+  border:1.5px solid rgba(255,255,255,.22);
+  background:rgba(255,255,255,.12);color:#fff;
+  font-family:var(--font);font-size:18px;font-weight:800;
+  outline:none;cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;
+  transition:.15s var(--ease);
+}
+.staff-club-selector select:hover{background:rgba(255,255,255,.18)}
+.staff-club-selector select option{color:var(--ink);background:#fff;font-size:15px}
+.staff-club-selector .scs-stats{
+  display:flex;gap:10px;margin-top:12px;
+}
+.staff-club-selector .scs-stat{
+  flex:1;background:rgba(255,255,255,.1);border-radius:var(--r2);
+  padding:8px 10px;text-align:center;backdrop-filter:blur(4px);
+}
+.staff-club-selector .scs-stat .sv{font-size:18px;font-weight:900;color:#fff}
+.staff-club-selector .scs-stat .sl{font-size:9px;color:rgba(255,255,255,.55);font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin-top:1px}
+
+.staff-tabs{
+  display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:4px;margin-bottom:16px;overflow-x:auto;
+  box-shadow:0 2px 12px rgba(77,25,121,.06);
+}
+.staff-tabs::-webkit-scrollbar{display:none}
+.staff-tab{
+  flex:1;min-width:0;padding:10px 8px;border-radius:var(--r2);
+  border:none;background:transparent;cursor:pointer;
+  font-family:var(--font);font-size:12px;font-weight:700;
+  color:var(--ink3);text-align:center;transition:.15s var(--ease);
+  white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:3px;
+}
+.staff-tab:hover{background:var(--bg);color:var(--ink2)}
+.staff-tab.active{background:var(--p);color:#fff;box-shadow:0 2px 8px rgba(77,25,121,.25)}
+.staff-tab .st-icon{font-size:16px;line-height:1}
+.staff-tab .st-label{font-size:11px;font-weight:700;letter-spacing:.2px}
+.staff-tab .st-badge{
+  background:rgba(255,255,255,.3);color:#fff;font-size:9px;font-weight:800;
+  padding:1px 6px;border-radius:999px;margin-left:2px;
+}
+.staff-tab:not(.active) .st-badge{background:var(--red);color:#fff}
+
+/* Staff sub-section cards */
+.staff-section-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;
+}
+.staff-section-hdr h3{font-size:13px;font-weight:800;color:var(--ink2);text-transform:uppercase;letter-spacing:.6px}
+
+/* Forms tab - submitted forms list */
+.form-submission-item{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 16px;border-bottom:1px solid var(--border);
+  transition:.12s var(--ease);
+}
+.form-submission-item:last-child{border-bottom:none}
+.form-submission-item:hover{background:var(--bg)}
+.fs-icon{
+  width:40px;height:40px;border-radius:12px;flex-shrink:0;
+  display:grid;place-items:center;font-size:18px;background:var(--p-soft);
+}
+.fs-body{flex:1;min-width:0}
+.fs-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.fs-sub{font-size:12px;color:var(--ink3);font-weight:500}
+.fs-status{flex-shrink:0}
+
+/* ─── BUDGET WORKFLOW ────────────────────────── */
+.budget-alert{
+  display:flex;align-items:center;gap:10px;
+  background:var(--red-bg);border:1.5px solid var(--red-bd);
+  border-radius:var(--r);padding:12px 14px;margin-bottom:10px;
+}
+.budget-alert .ba-icon{font-size:20px;flex-shrink:0}
+.budget-alert .ba-text{flex:1}
+.budget-alert .ba-title{font-size:13px;font-weight:700;color:var(--red)}
+.budget-alert .ba-sub{font-size:12px;color:var(--ink2);margin-top:2px}
+.budget-alert.warn{background:var(--amber-bg);border-color:var(--amber-bd)}
+.budget-alert.warn .ba-title{color:var(--amber)}
+.approve-confirm{
+  background:var(--green-bg);border:1.5px solid var(--green-bd);
+  border-radius:var(--r);padding:14px;margin-bottom:12px;
+}
+.approve-confirm .ac-title{font-size:14px;font-weight:800;color:var(--green);margin-bottom:6px}
+.approve-confirm .ac-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid var(--green-bd)}
+.approve-confirm .ac-row:last-child{border-bottom:none;font-weight:700}
+.spending-category{
+  display:flex;align-items:center;gap:10px;padding:10px 0;
+  border-bottom:1px solid var(--border);
+}
+.spending-category:last-child{border-bottom:none}
+.sc-icon{font-size:20px;width:32px;text-align:center;flex-shrink:0}
+.sc-body{flex:1}
+.sc-label{font-size:13px;font-weight:700;color:var(--ink)}
+.sc-bar-wrap{background:var(--bg);height:6px;border-radius:999px;overflow:hidden;margin-top:4px}
+.sc-bar{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--p),var(--p3))}
+.sc-amount{font-size:13px;font-weight:700;color:var(--ink2);flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="wordmark">
+      <div class="frog-icon">🐸</div>
+      <div>
+        <h1>FrogFlow</h1>
+        <div class="club-name" id="topClubName">TCU Rugby</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;position:relative">
+      <div class="notif-btn" id="searchBtn" onclick="openSearch()" title="Search (⌘K)">
+        🔍
+      </div>
+      <div class="notif-btn" id="notifBtn" onclick="toggleNotifPanel()">
+        🔔<div class="notif-pip" id="notifPip"></div>
+      </div>
+      <div class="notif-panel" id="notifPanel">
+        <div class="notif-hdr">
+          <h4>Notifications</h4>
+          <button onclick="markAllRead()">Mark all read</button>
+        </div>
+        <div id="notifList"></div>
+      </div>
+      <div class="role-chip">
+        <div class="role-dot" id="roleDot"></div>
+        <select id="roleSelect">
+          <option value="student">Colby · President</option>
+          <option value="staff">Jordan · Staff</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-section">Main</div>
+    <button class="nav-item active" data-tab="home"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></button>
+    <button class="nav-item" data-tab="requests"><span class="nav-icon">📋</span><span class="nav-label">Requests</span><span class="nav-badge" id="navBadge" style="display:none">0</span></button>
+    <button class="nav-item" data-tab="budget"><span class="nav-icon">💰</span><span class="nav-label">Budget</span></button>
+    <button class="nav-item" data-tab="roster"><span class="nav-icon">👥</span><span class="nav-label">Roster</span></button>
+    <button class="nav-item staff-only" data-tab="staffdash" id="staffDashTab" style="display:none"><span class="nav-icon">📊</span><span class="nav-label">All Clubs</span></button>
+    <div class="sidebar-section">More</div>
+    <button class="nav-item" data-tab="more"><span class="nav-icon">📅</span><span class="nav-label">Schedule</span></button>
+    <button class="nav-item" data-tab="qa"><span class="nav-icon">❓</span><span class="nav-label">Policy Help</span></button>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content" id="scrollArea">
+    <div id="pageContent"></div>
+  </div>
+
+</div><!-- end app-shell -->
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-item active" data-tab="home"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></button>
+  <button class="nav-item" data-tab="requests"><span class="nav-icon">📋</span><span class="nav-label">Requests</span></button>
+  <button class="nav-item" data-tab="budget"><span class="nav-icon">💰</span><span class="nav-label">Budget</span></button>
+  <button class="nav-item" data-tab="roster"><span class="nav-icon">👥</span><span class="nav-label">Roster</span></button>
+  <button class="nav-item" data-tab="more"><span class="nav-icon">⋯</span><span class="nav-label">More</span></button>
+</nav>
+
+<!-- SEARCH OVERLAY -->
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-box">
+    <div class="search-input-row">
+      <span class="si-icon">🔍</span>
+      <input id="searchInput" placeholder="Search clubs, players, requests…" autocomplete="off"/>
+      <button class="si-close" onclick="closeSearch()">✕</button>
+    </div>
+    <div class="search-results" id="searchResults">
+      <div class="search-empty">Start typing to search…</div>
+    </div>
+    <div class="search-hint">
+      <span><kbd>↑</kbd><kbd>↓</kbd> Navigate</span>
+      <span><kbd>Enter</kbd> Open</span>
+      <span><kbd>Esc</kbd> Close</span>
+    </div>
+  </div>
+</div>
+
+<!-- SHEET -->
+<div class="sheet-bg" id="sheetBg">
+  <div class="sheet" id="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-hdr">
+      <h3 id="sheetTitle">Details</h3>
+      <button class="sheet-close" id="sheetClose">×</button>
+    </div>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+(function(){
+'use strict';
+const $  = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>Array.from(r.querySelectorAll(s));
+const uid = ()=>Math.random().toString(36).slice(2,8).toUpperCase();
+const esc = s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const money = n=>'$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+const dateStr = d=>{try{return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}catch{return String(d)}};
+const daysUntil = d=>{const now=new Date();const t=new Date(d);return Math.round((t.setHours(12)-now.setHours(12))/864e5)};
+const initials = name=>name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();
+
+/* ── STATE ── */
+const S = {
+  role:'student',
+  club:'TCU Rugby',
+
+  clubs:{
+    'TCU Rugby':{
+      op:{start:5200,bal:5200},
+      re:{start:2800,bal:2800},
+      ledger:[]
+    },
+    "TCU Women's Soccer":{
+      op:{start:4100,bal:4100},
+      re:{start:1500,bal:1500},
+      ledger:[]
+    },
+    'TCU Volleyball':{
+      op:{start:3600,bal:3600},
+      re:{start:900,bal:900},
+      ledger:[]
+    }
+  },
+
+  roster:{
+    'TCU Rugby':[
+      {id:'r1',name:'Colby Reynolds',year:'Junior',pos:'Flanker',email:'c.reynolds@tcu.edu',status:'Eligible',waiver:true,medical:true},
+      {id:'r2',name:'Marcus Webb',year:'Senior',pos:'Hooker',email:'m.webb@tcu.edu',status:'Eligible',waiver:true,medical:true},
+      {id:'r3',name:'Tyler Okafor',year:'Sophomore',pos:'Lock',email:'t.okafor@tcu.edu',status:'Pending',waiver:true,medical:false},
+      {id:'r4',name:'Jake Hernandez',year:'Junior',pos:'Prop',email:'j.hernandez@tcu.edu',status:'Pending',waiver:false,medical:false},
+      {id:'r5',name:'Sam Liu',year:'Freshman',pos:'Scrumhalf',email:'s.liu@tcu.edu',status:'Eligible',waiver:true,medical:true},
+      {id:'r6',name:'Drew Patterson',year:'Senior',pos:'Fly-half',email:'d.patterson@tcu.edu',status:'Eligible',waiver:true,medical:true},
+      {id:'r7',name:'Chris Morales',year:'Sophomore',pos:'Wing',email:'c.morales@tcu.edu',status:'Ineligible',waiver:true,medical:false},
+      {id:'r8',name:'Nate Brooks',year:'Junior',pos:'Center',email:'n.brooks@tcu.edu',status:'Eligible',waiver:true,medical:true},
+      {id:'r9',name:'Alex Turner',year:'Junior',pos:'Fullback',email:'a.turner@tcu.edu',status:'Eligible',waiver:true,medical:true},
+      {id:'r10',name:'Damon Ellis',year:'Senior',pos:'No. 8',email:'d.ellis@tcu.edu',status:'Eligible',waiver:true,medical:true},
+    ]
+  },
+
+  events:[
+    {id:'e1',club:'TCU Rugby',type:'Practice',title:'Tuesday Practice',date:'2026-03-24',time:'7:00 PM',loc:'Rec Center Fields'},
+    {id:'e2',club:'TCU Rugby',type:'Meeting',title:'Officer Meeting',date:'2026-03-25',time:'6:00 PM',loc:'Rec Center 204'},
+    {id:'e3',club:'TCU Rugby',type:'Practice',title:'Thursday Practice',date:'2026-03-26',time:'7:00 PM',loc:'Rec Center Fields'},
+    {id:'e4',club:'TCU Rugby',type:'Game',title:'vs. UT-Arlington',date:'2026-03-28',time:'2:00 PM',loc:'Fort Worth, TX'},
+    {id:'e5',club:'TCU Rugby',type:'Travel',title:'Dallas Tournament Trip',date:'2026-04-05',time:'8:00 AM',loc:'Dallas, TX'},
+    {id:'e6',club:'TCU Rugby',type:'Game',title:'vs. SMU',date:'2026-04-12',time:'1:00 PM',loc:'Dallas, TX'},
+  ],
+
+  announcements:[
+    {id:'a1',title:'Roster Verification Due April 1',body:'All clubs must submit updated rosters by April 1. Players missing waivers or medical clearance will be ineligible.',date:'2026-03-20',by:'Jordan Lee · Rec Staff'},
+    {id:'a2',title:'Unspent Operational Funds Expire May 31',body:'Submit any planned purchase requests before May 15 to allow processing time.',date:'2026-03-18',by:'Jordan Lee · Rec Staff'},
+  ],
+
+  requests:[],
+  qa:[{from:'ai',text:"Hi! Ask me anything about TCU Club Sports policies — purchases, travel, rosters, or budgets."}],
+  tab:'home',
+  staffTab:'overview',
+  reqFilter:'All',
+  notifications:[],
+  settings:{},
+  uploads:{},
+  profilePhotos:{student:null,staff:null},
+  documents:[],
+  seeded:false,
+};
+
+const REQ_TYPES=[
+  {key:'equipment',label:'Equipment',icon:'🛒'},
+  {key:'tourney',  label:'Tournament',icon:'🏆'},
+  {key:'hotel',    label:'Hotel/Travel',icon:'🏨'},
+  {key:'coach',    label:'Coach Pay',icon:'🧑‍🏫'},
+  {key:'officials',label:'Officials',icon:'🦺'},
+  {key:'medical',  label:'Medical',icon:'🩺'},
+  {key:'other',    label:'Other',icon:'📎'},
+];
+
+const POLICIES=[
+  {kw:['purchase','equipment','buy','gear','item','supply'],text:'Equipment purchases under $500 need a vendor link or quote. Over $500 requires a formal invoice attachment. Charges hit your operational fund unless you specify restricted.'},
+  {kw:['travel','hotel','lodging','trip','stay'],text:'Hotel and travel requests must be submitted at least 21 days before departure. Include destination, dates, number of travelers, hotel preference, and an emergency contact.'},
+  {kw:['roster','eligibility','eligible','player','waiver','medical'],text:'Roster approvals for competitions must be submitted at least 14 days before the event. Every player needs a current liability waiver and medical clearance on file.'},
+  {kw:['budget','fund','operational','restricted','donation','balance','money','spend'],text:'Operational funds (dues + SGA) must be spent before May 31 — they do not carry over. Restricted funds (donations) carry over year to year but can only be used for designated purposes.'},
+  {kw:['coach','stipend','pay','payment','instructor'],text:'Coach stipend requests require a signed agreement on file. Include the coach name, amount, and period covered. Payments are processed through the Finance Office.'},
+  {kw:['official','referee','ref','fee','game'],text:'Referee fees should include number of games, cost per game, and the assigning organization. Submit at least 7 days before the first game.'},
+  {kw:['deadline','late','time','how long','turnaround'],text:'Key deadlines: roster approvals 14 days before events, travel 21 days before departure, purchase requests 5–7 business days for processing.'},
+];
+
+/* ── SEED ── */
+function seed(){
+  if(S.seeded) return; S.seeded=true;
+  const d=n=>new Date(Date.now()+n*864e5).toISOString();
+  S.requests.push(
+    {id:'REQ-'+uid(),type:'equipment',club:'TCU Rugby',by:'Colby Reynolds',email:'c.reynolds@tcu.edu',createdAt:d(-3),status:'In Review',fund:'operational',title:'Spring training gear restock',cost:680,fields:{items:'10x cones, 8x resistance bands, 6x tackle shields',vendor:'BSN Sports',delivery:'TCU Rec Center'},staffNote:'Needs formal invoice attached (>$500).'},
+    {id:'REQ-'+uid(),type:'tourney',club:'TCU Rugby',by:'Colby Reynolds',email:'c.reynolds@tcu.edu',createdAt:d(-8),status:'Approved',fund:'operational',title:'Dallas Spring 7s Entry Fee',cost:450,fields:{tournamentName:'Dallas Spring 7s',organizer:'Texas Rugby Union',date:'2026-04-05',numPlayers:14},staffNote:'Approved and processed.'},
+    {id:'REQ-'+uid(),type:'hotel',club:'TCU Rugby',by:'Marcus Webb',email:'m.webb@tcu.edu',createdAt:d(-1),status:'Needs Info',fund:'restricted',title:'Dallas Tournament Lodging',cost:1200,fields:{destination:'Dallas, TX',checkIn:'2026-04-05',checkOut:'2026-04-06',travelers:'14 players + 2 coaches',hotelPref:'',emergency:'Coach Davis 817-555-0142'},staffNote:'Need hotel preference or 2 options before we can approve.'},
+    {id:'REQ-'+uid(),type:'coach',club:'TCU Rugby',by:'Colby Reynolds',email:'c.reynolds@tcu.edu',createdAt:d(-12),status:'Approved',fund:'operational',title:'Coach Davis Spring Stipend',cost:600,fields:{coachName:'Mike Davis',period:'Spring 2026',payMethod:'Check to Finance Office'},staffNote:''},
+    {id:'REQ-'+uid(),type:'officials',club:"TCU Women's Soccer",by:'Avery Chen',email:'a.chen@tcu.edu',createdAt:d(-2),status:'Submitted',fund:'operational',title:'Spring Home Match Referee Fees',cost:340,fields:{numGames:4,perGame:85,assigner:'North Texas Soccer Officials'},staffNote:''}
+  );
+  addTxn('TCU Rugby',{fund:'op',type:'credit',amt:1800,memo:'SGA semester allocation'});
+  addTxn('TCU Rugby',{fund:'re',type:'credit',amt:750,memo:'Alumni donation – travel fund'});
+  addTxn('TCU Rugby',{fund:'op',type:'debit',amt:450,memo:'Approved: Dallas Spring 7s entry'});
+  addTxn('TCU Rugby',{fund:'op',type:'debit',amt:600,memo:'Approved: Coach Davis stipend'});
+  addTxn("TCU Women's Soccer",{fund:'op',type:'credit',amt:1200,memo:'Club dues collected'});
+}
+
+/* ── NOTIFICATIONS ── */
+function pushNotif({icon,title,sub,club,reqId=null,type='info'}){
+  S.notifications.unshift({id:'N'+uid(),icon,title,sub,club,reqId,type,ts:new Date().toISOString(),read:false});
+  renderNotifPip(); renderNotifList();
+}
+function renderNotifPip(){
+  const unread=S.notifications.filter(n=>!n.read).length;
+  const pip=document.getElementById('notifPip');
+  if(pip) pip.classList.toggle('show',unread>0);
+}
+function renderNotifList(){
+  const list=document.getElementById('notifList'); if(!list) return;
+  if(!S.notifications.length){list.innerHTML='<div class="notif-empty">🎉 All caught up!</div>';return;}
+  list.innerHTML='';
+  const colors={approve:'green',deny:'red',info:'purple',warn:'amber'};
+  S.notifications.slice(0,12).forEach(n=>{
+    const item=mk('div','notif-item'+(n.read?'':' unread'));
+    const bg={green:'var(--green-bg)',red:'var(--red-bg)',purple:'var(--p-soft)',amber:'var(--amber-bg)'}[colors[n.type]]||'var(--bg)';
+    item.innerHTML=`<div class="notif-icon" style="background:${bg}">${n.icon}</div><div class="notif-body"><div class="notif-title">${esc(n.title)}</div><div class="notif-sub">${esc(n.sub)}</div><div class="notif-time">${relTime(n.ts)}${n.club?' · '+esc(n.club):''}</div></div>`;
+    if(n.reqId){item.style.cursor='pointer';item.onclick=()=>{n.read=true;toggleNotifPanel();renderNotifPip();showReqDetail(n.reqId);};}
+    else item.onclick=()=>{n.read=true;renderNotifList();renderNotifPip();};
+    list.appendChild(item);
+  });
+}
+function relTime(ts){
+  const m=Math.round((Date.now()-new Date(ts).getTime())/60000);
+  if(m<1) return 'Just now';
+  if(m<60) return m+'m ago';
+  const h=Math.round(m/60);
+  if(h<24) return h+'h ago';
+  return Math.round(h/24)+'d ago';
+}
+window.toggleNotifPanel=function(){
+  const p=document.getElementById('notifPanel'); if(!p) return;
+  p.classList.toggle('open');
+};
+window.markAllRead=function(){S.notifications.forEach(n=>n.read=true);renderNotifPip();renderNotifList();};
+function seedNotifications(){
+  pushNotif({icon:'✅',title:'Request Approved',sub:'Dallas Spring 7s Entry Fee was approved.',club:'TCU Rugby',type:'approve',reqId:S.requests[1]?.id});
+  pushNotif({icon:'⚠️',title:'More Info Needed',sub:'Dallas Tournament Lodging needs hotel preference.',club:'TCU Rugby',type:'warn',reqId:S.requests[2]?.id});
+  pushNotif({icon:'📋',title:'New Request Submitted',sub:"Spring Home Match Referee Fees submitted by TCU Women's Soccer.",club:"TCU Women's Soccer",type:'info',reqId:S.requests[4]?.id});
+  pushNotif({icon:'🔴',title:'Player Ineligible',sub:'Chris Morales is missing medical clearance.',club:'TCU Rugby',type:'deny'});
+  pushNotif({icon:'📅',title:'Roster Due April 1',sub:'Spring roster verification deadline is in 7 days.',club:'TCU Rugby',type:'warn'});
+}
+
+/* ── STAFF DASHBOARD ── */
+function pgStaffDash(){
+  const el=mk('div');
+  const hdr=mk('div');
+  hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:6px';
+  hdr.innerHTML='<div style="font-size:20px;font-weight:800">All Clubs</div>';
+  el.appendChild(hdr);
+  const sub=mk('div');
+  sub.style.cssText='font-size:13px;color:var(--ink3);margin-bottom:16px';
+  sub.textContent='Cross-club overview · FY 2025–26';
+  el.appendChild(sub);
+
+  const allReqs=S.requests;
+  const totalPending=allReqs.filter(r=>['Submitted','In Review'].includes(r.status)).length;
+  const totalNeedInfo=allReqs.filter(r=>r.status==='Needs Info').length;
+  const totalInelig=Object.values(S.roster).flat().filter(p=>p.status!=='Eligible').length;
+  const kRow=mk('div');
+  kRow.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px';
+  [{v:totalPending,l:'Pending',c:'var(--amber)',bg:'var(--amber-bg)'},{v:totalNeedInfo,l:'Need Info',c:'var(--red)',bg:'var(--red-bg)'},{v:totalInelig,l:'Not Eligible',c:'var(--p)',bg:'var(--p-soft)'}].forEach(k=>{
+    const box=mk('div');
+    box.style.cssText='background:'+k.bg+';border-radius:var(--r);padding:12px 10px;text-align:center';
+    box.innerHTML='<div style="font-size:24px;font-weight:900;color:'+k.c+'">'+k.v+'</div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--ink3);margin-top:2px">'+k.l+'</div>';
+    kRow.appendChild(box);
+  });
+  el.appendChild(kRow);
+
+  const pending=allReqs.filter(r=>['Submitted','In Review','Needs Info'].includes(r.status)).sort((a,b)=>{const p={'Needs Info':0,'Submitted':1,'In Review':2};return (p[a.status]||3)-(p[b.status]||3);});
+  if(pending.length){
+    const qhdr=mk('div','sec-hdr');
+    qhdr.innerHTML='<h3>Review Queue ('+pending.length+')</h3>';
+    el.appendChild(qhdr);
+    const qcard=mk('div','card');
+    pending.forEach(r=>{
+      const t=REQ_TYPES.find(x=>x.key===r.type)||{icon:'📋'};
+      const sc={Approved:'green','Needs Info':'amber',Denied:'red',Submitted:'purple','In Review':'purple'}[r.status]||'gray';
+      const item=mk('div','feed-item');
+      item.style.flexDirection='column';item.style.alignItems='stretch';item.style.gap='10px';
+
+      // Info row (safe — no onclick IDs needed here)
+      const infoRow=mk('div');
+      infoRow.style.cssText='display:flex;align-items:center;gap:10px';
+      infoRow.innerHTML='<div style="font-size:20px">'+t.icon+'</div>'
+        +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(r.title)+'</div>'
+        +'<div style="font-size:11px;color:var(--ink3)">'+esc(r.club)+' · '+esc(r.by)+'</div>'
+        +'</div>'
+        +'<span class="badge '+sc+'">'+esc(r.status)+'</span>';
+      item.appendChild(infoRow);
+
+      // Action buttons — built with DOM so we avoid quote nesting
+      const btnRow=mk('div','quick-approve-row');
+      const btnA=mk('button','qa-approve ok'); btnA.textContent='✓ Approve';
+      btnA.onclick=e=>{e.stopPropagation();staffQuickApprove(r.id);};
+      const btnN=mk('button','qa-approve info'); btnN.textContent='Need Info';
+      btnN.onclick=e=>{e.stopPropagation();staffQuickNeedInfo(r.id);};
+      const btnD=mk('button','qa-approve bad'); btnD.textContent='✕ Deny';
+      btnD.onclick=e=>{e.stopPropagation();staffQuickDeny(r.id);};
+      btnRow.appendChild(btnA); btnRow.appendChild(btnN); btnRow.appendChild(btnD);
+      item.appendChild(btnRow);
+
+      item.onclick=()=>showReqDetail(r.id);
+      qcard.appendChild(item);
+    });
+    el.appendChild(qcard);
+  }
+
+  const chdr=mk('div','sec-hdr');chdr.style.marginTop='8px';chdr.innerHTML='<h3>Club Health</h3>';el.appendChild(chdr);
+  Object.entries(S.clubs).forEach(([name,club])=>{
+    const opPct=Math.max(0,Math.min(100,(club.op.start-club.op.bal)/club.op.start*100));
+    const clubReqs=S.requests.filter(r=>r.club===name);
+    const clubPending=clubReqs.filter(r=>['Submitted','In Review','Needs Info'].includes(r.status)).length;
+    const clubRoster=S.roster[name]||[];
+    const clubInelig=clubRoster.filter(p=>p.status!=='Eligible').length;
+    const hClass=opPct>85?'danger':opPct>60?'warn':'good';
+    const card=mk('div','club-summary-card');
+    card.innerHTML='<div class="club-summary-top"><div><div class="club-summary-name">'+esc(name)+'</div><div class="club-summary-meta">'+clubRoster.length+' players · '+clubPending+' pending</div></div>'+(clubInelig>0?'<span class="badge amber">⚠️ '+clubInelig+' ineligible</span>':'<span class="badge green">✓ Roster OK</span>')+'</div><div class="club-mini-stats"><div class="cms"><div class="cv" style="color:var(--green)">'+money(club.op.bal)+'</div><div class="cl">Operational</div></div><div class="cms"><div class="cv" style="color:var(--p)">'+money(club.re.bal)+'</div><div class="cl">Restricted</div></div><div class="cms"><div class="cv">'+clubPending+'</div><div class="cl">Pending</div></div></div><div class="health-bar"><div class="health-fill '+hClass+'" style="width:'+opPct.toFixed(0)+'%"></div></div><div style="font-size:11px;color:var(--ink3);margin-top:4px">'+opPct.toFixed(0)+'% operational spent'+(opPct>85?' — running low':'')+'</div>'+(opPct>85?'<div style="font-size:12px;color:var(--red);font-weight:700;margin-top:6px">⚠️ Low balance — consider reaching out</div>':'');
+    card.onclick=()=>{S.club=name;document.getElementById('topClubName').textContent=name;setTab('budget');};
+    el.appendChild(card);
+  });
+
+  const spendHdr=mk('div','sec-hdr');spendHdr.style.marginTop='8px';spendHdr.innerHTML='<h3>Spending by Category</h3>';el.appendChild(spendHdr);
+  const catTotals={};
+  const catIcons={equipment:'🛒',tourney:'🏆',hotel:'🏨',coach:'🧑‍🏫',officials:'🦺',medical:'🩺',other:'📎'};
+  S.requests.filter(r=>r.status==='Approved').forEach(r=>{catTotals[r.type]=(catTotals[r.type]||0)+Number(r.cost||0);});
+  const maxCat=Math.max(...Object.values(catTotals),1);
+  const spendCard=mk('div','card');spendCard.style.padding='14px';
+  if(!Object.keys(catTotals).length){spendCard.innerHTML='<div style="color:var(--ink3);font-size:13px;text-align:center;padding:10px">No approved spending yet</div>';}
+  else{Object.entries(catTotals).sort((a,b)=>b[1]-a[1]).forEach(([cat,total])=>{const row=mk('div','spending-category');row.innerHTML='<div class="sc-icon">'+(catIcons[cat]||'📋')+'</div><div class="sc-body"><div class="sc-label">'+(REQ_TYPES.find(t=>t.key===cat)?.label||cat)+'</div><div class="sc-bar-wrap"><div class="sc-bar" style="width:'+(total/maxCat*100).toFixed(0)+'%"></div></div></div><div class="sc-amount">'+money(total)+'</div>';spendCard.appendChild(row);});}
+  el.appendChild(spendCard);
+  return el;
+}
+
+window.staffQuickApprove=function(id){showApproveConfirm(id);};
+
+/* ── STAFF CLUB VIEW (Tabbed Command Center) ── */
+function pgStaffClubView(){
+  const el=mk('div');
+  const club=S.clubs[S.club];
+  if(!club) { S.club=Object.keys(S.clubs)[0]; return pgStaffClubView(); }
+  const roster=S.roster[S.club]||[];
+  const clubReqs=S.requests.filter(r=>r.club===S.club);
+  const pendingReqs=clubReqs.filter(r=>['Submitted','In Review','Needs Info'].includes(r.status));
+  const elig=roster.filter(p=>p.status==='Eligible').length;
+  const totalBal=(club.op.bal||0)+(club.re.bal||0);
+
+  // ── Club Selector Hero ──
+  const hero=mk('div','staff-club-selector');
+  hero.innerHTML=`<div class="scs-label">Managing Club</div>`;
+  const sel=mk('select');
+  Object.keys(S.clubs).forEach(c=>{
+    const o=document.createElement('option');
+    o.value=c; o.textContent=c; if(c===S.club) o.selected=true;
+    sel.appendChild(o);
+  });
+  sel.onchange=e=>{S.club=e.target.value;$('#topClubName').textContent=S.club;render()};
+  hero.appendChild(sel);
+
+  const stats=mk('div','scs-stats');
+  stats.innerHTML=`
+    <div class="scs-stat"><div class="sv">${pendingReqs.length}</div><div class="sl">Pending</div></div>
+    <div class="scs-stat"><div class="sv">${money(totalBal)}</div><div class="sl">Balance</div></div>
+    <div class="scs-stat"><div class="sv">${elig}/${roster.length}</div><div class="sl">Eligible</div></div>
+    <div class="scs-stat"><div class="sv">${clubReqs.filter(r=>r.status==='Approved').length}</div><div class="sl">Approved</div></div>`;
+  hero.appendChild(stats);
+  el.appendChild(hero);
+
+  // ── Tabs ──
+  const tabs=mk('div','staff-tabs');
+  const tabDefs=[
+    {key:'overview', icon:'📋', label:'Overview'},
+    {key:'roster',   icon:'👥', label:'Roster'},
+    {key:'requests', icon:'📨', label:'Requests', badge:pendingReqs.length},
+    {key:'finances', icon:'💰', label:'Finances'},
+    {key:'forms',    icon:'📄', label:'Forms'},
+  ];
+  tabDefs.forEach(t=>{
+    const btn=mk('button','staff-tab'+(S.staffTab===t.key?' active':''));
+    let badgeHtml=t.badge?`<span class="st-badge">${t.badge}</span>`:'';
+    btn.innerHTML=`<span class="st-icon">${t.icon}</span><span class="st-label">${t.label}${badgeHtml}</span>`;
+    btn.onclick=()=>{S.staffTab=t.key;render()};
+    tabs.appendChild(btn);
+  });
+  el.appendChild(tabs);
+
+  // ── Tab Content ──
+  if(S.staffTab==='overview') el.appendChild(staffTabOverview(club,roster,clubReqs,pendingReqs));
+  if(S.staffTab==='roster')   el.appendChild(staffTabRoster(roster));
+  if(S.staffTab==='requests') el.appendChild(staffTabRequests(clubReqs));
+  if(S.staffTab==='finances') el.appendChild(staffTabFinances(club));
+  if(S.staffTab==='forms')    el.appendChild(staffTabForms(roster,clubReqs));
+
+  return el;
+}
+
+/* ── Staff Tab: Overview ── */
+function staffTabOverview(club,roster,clubReqs,pendingReqs){
+  const el=mk('div');
+
+  // Needs attention section
+  if(pendingReqs.length){
+    const hdr=mk('div','staff-section-hdr');
+    hdr.innerHTML=`<h3>Needs Your Attention (${pendingReqs.length})</h3>`;
+    el.appendChild(hdr);
+    const card=mk('div','card');
+    pendingReqs.slice(0,4).forEach(r=>{
+      const t=REQ_TYPES.find(x=>x.key===r.type)||{icon:'📋'};
+      const sc={Approved:'green','Needs Info':'amber',Denied:'red',Submitted:'purple','In Review':'purple'}[r.status]||'gray';
+      const item=mk('div','feed-item');
+      item.style.flexDirection='column';item.style.alignItems='stretch';item.style.gap='10px';
+      const infoRow=mk('div');
+      infoRow.style.cssText='display:flex;align-items:center;gap:10px';
+      infoRow.innerHTML='<div style="font-size:20px">'+t.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:var(--ink)">'+esc(r.title)+'</div><div style="font-size:11px;color:var(--ink3)">'+esc(r.by)+' · '+money(r.cost)+'</div></div><span class="badge '+sc+'">'+esc(r.status)+'</span>';
+      item.appendChild(infoRow);
+      const btnRow=mk('div','quick-approve-row');
+      const btnA=mk('button','qa-approve ok'); btnA.textContent='✓ Approve';
+      btnA.onclick=e=>{e.stopPropagation();staffQuickApprove(r.id);};
+      const btnN=mk('button','qa-approve info'); btnN.textContent='Need Info';
+      btnN.onclick=e=>{e.stopPropagation();staffQuickNeedInfo(r.id);};
+      const btnD=mk('button','qa-approve bad'); btnD.textContent='✕ Deny';
+      btnD.onclick=e=>{e.stopPropagation();staffQuickDeny(r.id);};
+      btnRow.appendChild(btnA); btnRow.appendChild(btnN); btnRow.appendChild(btnD);
+      item.appendChild(btnRow);
+      item.onclick=()=>showReqDetail(r.id);
+      card.appendChild(item);
+    });
+    el.appendChild(card);
+  } else {
+    const allGood=mk('div','card');
+    allGood.style.padding='24px';allGood.style.textAlign='center';
+    allGood.innerHTML='<div style="font-size:32px;margin-bottom:8px">✅</div><div style="font-size:15px;font-weight:700;color:var(--ink)">All caught up!</div><div style="font-size:13px;color:var(--ink3);margin-top:4px">No pending requests for this club.</div>';
+    el.appendChild(allGood);
+  }
+
+  // Quick stats row
+  const qhdr=mk('div','staff-section-hdr');qhdr.style.marginTop='8px';
+  qhdr.innerHTML='<h3>Quick Stats</h3>';
+  el.appendChild(qhdr);
+  const statsCard=mk('div','card');statsCard.style.padding='14px';
+  const opPct=Math.min(100,Math.max(0,(club.op.start-club.op.bal)/club.op.start*100));
+  const rePct=Math.min(100,Math.max(0,(club.re.start-club.re.bal)/club.re.start*100));
+  const inelig=roster.filter(p=>p.status!=='Eligible').length;
+  const hClass=opPct>85?'danger':opPct>60?'warn':'good';
+  statsCard.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Operational Fund</div>
+        <div style="font-size:20px;font-weight:900;color:var(--green)">${money(club.op.bal)} <span style="font-size:12px;color:var(--ink3);font-weight:600">of ${money(club.op.start)}</span></div>
+        <div class="health-bar" style="margin-top:6px"><div class="health-fill ${hClass}" style="width:${opPct}%"></div></div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:3px">${opPct.toFixed(0)}% spent</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Restricted Fund</div>
+        <div style="font-size:20px;font-weight:900;color:var(--p)">${money(club.re.bal)} <span style="font-size:12px;color:var(--ink3);font-weight:600">of ${money(club.re.start)}</span></div>
+        <div class="health-bar" style="margin-top:6px"><div class="health-fill ${rePct>85?'danger':'good'}" style="width:${rePct}%"></div></div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:3px">${rePct.toFixed(0)}% spent</div>
+      </div>
+    </div>
+    ${inelig>0?'<div style="background:var(--amber-bg);border:1px solid var(--amber-bd);border-radius:var(--r2);padding:10px 12px;display:flex;align-items:center;gap:8px"><span style="font-size:16px">⚠️</span><div><div style="font-size:12px;font-weight:700;color:var(--amber)">'+inelig+' player(s) not eligible</div><div style="font-size:11px;color:var(--ink2);margin-top:1px">Missing waivers or medical clearance</div></div></div>':'<div style="background:var(--green-bg);border:1px solid var(--green-bd);border-radius:var(--r2);padding:10px 12px;display:flex;align-items:center;gap:8px"><span style="font-size:16px">✅</span><div style="font-size:12px;font-weight:700;color:var(--green)">All players eligible</div></div>'}
+  `;
+  el.appendChild(statsCard);
+
+  // Recent activity
+  const ahdr=mk('div','staff-section-hdr');ahdr.style.marginTop='8px';
+  ahdr.innerHTML='<h3>Recent Activity</h3>';
+  el.appendChild(ahdr);
+  const actCard=mk('div','card');
+  const recentReqs=clubReqs.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,5);
+  if(!recentReqs.length){
+    actCard.innerHTML='<div style="padding:20px;text-align:center;color:var(--ink3);font-size:13px">No activity yet</div>';
+  } else {
+    recentReqs.forEach(r=>{
+      const t=REQ_TYPES.find(x=>x.key===r.type)||{icon:'📋'};
+      const sc={Approved:'green','Needs Info':'amber',Denied:'red',Submitted:'purple','In Review':'purple'}[r.status]||'gray';
+      const item=mk('div','feed-item');
+      item.innerHTML=`<div class="fi-icon ${sc}">${t.icon}</div><div class="fi-body"><div class="fi-title">${esc(r.title)}</div><div class="fi-sub">${esc(r.by)} · ${dateStr(r.createdAt)}</div></div><div class="fi-right"><span class="badge ${sc}">${esc(r.status)}</span><span style="font-size:13px;font-weight:700;color:var(--ink2)">${money(r.cost)}</span></div>`;
+      item.onclick=()=>showReqDetail(r.id);
+      actCard.appendChild(item);
+    });
+  }
+  el.appendChild(actCard);
+  return el;
+}
+
+/* ── Staff Tab: Roster ── */
+function staffTabRoster(roster){
+  const el=mk('div');
+  const elig=roster.filter(p=>p.status==='Eligible').length;
+  const pend=roster.filter(p=>p.status==='Pending').length;
+  const inel=roster.filter(p=>p.status==='Ineligible').length;
+
+  // Header with export
+  const hdr=mk('div');
+  hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:14px';
+  hdr.innerHTML=`<div style="font-size:15px;font-weight:800;color:var(--ink)">Roster · ${esc(S.club)}</div>`;
+  const expBtn=mk('button','export-btn');
+  expBtn.innerHTML='📥 Export CSV';
+  expBtn.onclick=()=>exportRoster(S.club);
+  hdr.appendChild(expBtn);
+  el.appendChild(hdr);
+
+  // Status summary
+  const sc=mk('div','card');sc.style.padding='14px';
+  sc.innerHTML=`
+    <div style="display:flex;gap:10px">
+      <div style="flex:1;text-align:center">
+        <div style="font-size:26px;font-weight:900;color:var(--green)">${elig}</div>
+        <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.4px">Eligible</div>
+      </div>
+      <div style="flex:1;text-align:center;border-left:1px solid var(--border);border-right:1px solid var(--border)">
+        <div style="font-size:26px;font-weight:900;color:var(--amber)">${pend}</div>
+        <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.4px">Pending</div>
+      </div>
+      <div style="flex:1;text-align:center">
+        <div style="font-size:26px;font-weight:900;color:var(--red)">${inel}</div>
+        <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.4px">Ineligible</div>
+      </div>
+    </div>`;
+  el.appendChild(sc);
+
+  if(pend+inel>0){
+    const alert=mk('div','info-box warn');
+    alert.style.marginBottom='12px';
+    alert.innerHTML=`<div class="ib-label">⚠️ Action Required</div><div class="ib-text">${pend+inel} player(s) cannot compete until waivers and medical clearance are on file.</div>`;
+    el.appendChild(alert);
+  }
+
+  const rc=mk('div','card');
+  if(!roster.length){
+    rc.innerHTML='<div style="padding:20px;text-align:center;color:var(--ink3);font-size:13px">No players on roster</div>';
+  } else {
+    roster.forEach(p=>{
+      const row=mk('div','player-row');
+      const statusDot=p.status==='Eligible'?'eligible':p.status==='Pending'?'pending':'ineligible';
+      row.innerHTML=`
+        <div class="avatar">${initials(p.name)}</div>
+        <div class="player-info">
+          <div class="player-name">${esc(p.name)}</div>
+          <div class="player-meta">${esc(p.year)} · ${esc(p.pos)}</div>
+        </div>
+        <div class="elig-dot ${statusDot}"></div>`;
+      row.onclick=()=>showPlayerSheet(p);
+      rc.appendChild(row);
+    });
+  }
+  el.appendChild(rc);
+  return el;
+}
+
+/* ── Staff Tab: Requests ── */
+function staffTabRequests(clubReqs){
+  const el=mk('div');
+
+  // Header with new button + export
+  const hdr=mk('div');
+  hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:14px';
+  hdr.innerHTML=`<div style="font-size:15px;font-weight:800;color:var(--ink)">All Requests · ${esc(S.club)}</div>`;
+  const hdrBtns=mk('div');hdrBtns.style.cssText='display:flex;gap:8px';
+  const expBtn=mk('button','export-btn');
+  expBtn.innerHTML='📥 Export';
+  expBtn.onclick=()=>exportRequests(S.club);
+  const nb=mk('button','btn primary sm');
+  nb.innerHTML='+ New'; nb.onclick=()=>showNewReq();
+  hdrBtns.appendChild(expBtn);hdrBtns.appendChild(nb);
+  hdr.appendChild(hdrBtns);
+  el.appendChild(hdr);
+
+  // Filter chips
+  const filters=mk('div');
+  filters.style.cssText='display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:4px;scrollbar-width:none';
+  ['All','Submitted','In Review','Needs Info','Approved','Denied'].forEach(f=>{
+    const b=mk('button');
+    b.style.cssText=`padding:7px 14px;border-radius:999px;border:1.5px solid ${S.reqFilter===f?'var(--p)':'var(--border)'};background:${S.reqFilter===f?'var(--p)':'#fff'};color:${S.reqFilter===f?'#fff':'var(--ink2)'};font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0`;
+    b.textContent=f;
+    b.onclick=()=>{S.reqFilter=f;render()};
+    filters.appendChild(b);
+  });
+  el.appendChild(filters);
+
+  let items=[...clubReqs];
+  if(S.reqFilter!=='All') items=items.filter(r=>r.status===S.reqFilter);
+  items.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+
+  if(!items.length){
+    const emp=mk('div','empty');
+    emp.innerHTML='<div class="e-ico">📋</div><div class="e-txt">No requests</div><div class="e-sub">No matching requests for this club</div>';
+    el.appendChild(emp);
+    return el;
+  }
+
+  const card=mk('div','card');
+  items.forEach(r=>{
+    const t=REQ_TYPES.find(x=>x.key===r.type)||{icon:'📋',label:r.type};
+    const sc={Approved:'green','Needs Info':'amber',Denied:'red',Submitted:'purple','In Review':'purple'}[r.status]||'gray';
+    const item=mk('div','feed-item');
+    item.innerHTML=`<div class="fi-icon ${sc}">${t.icon}</div><div class="fi-body"><div class="fi-title">${esc(r.title)}</div><div class="fi-sub">${esc(r.by)} · ${dateStr(r.createdAt)}</div></div><div class="fi-right"><span class="badge ${sc}">${esc(r.status)}</span><span style="font-size:13px;font-weight:700;color:var(--ink2)">${money(r.cost)}</span></div>`;
+    item.onclick=()=>showReqDetail(r.id);
+    card.appendChild(item);
+  });
+  el.appendChild(card);
+  return el;
+}
+
+/* ── Staff Tab: Finances ── */
+function staffTabFinances(club){
+  const el=mk('div');
+
+  // Post transaction button + export
+  const hdr=mk('div');
+  hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:14px';
+  hdr.innerHTML=`<div style="font-size:15px;font-weight:800;color:var(--ink)">Finances · ${esc(S.club)}</div>`;
+  const hdrBtns=mk('div');hdrBtns.style.cssText='display:flex;gap:8px';
+  const expBtn=mk('button','export-btn');
+  expBtn.innerHTML='📥 Export';
+  expBtn.onclick=()=>exportFinances(S.club);
+  const pb=mk('button','btn primary sm');
+  pb.innerHTML='+ Post Update'; pb.onclick=showPostTxn;
+  hdrBtns.appendChild(expBtn);hdrBtns.appendChild(pb);
+  hdr.appendChild(hdrBtns);
+  el.appendChild(hdr);
+
+  const opSpent=club.op.start-club.op.bal;
+  const reSpent=club.re.start-club.re.bal;
+  const opPct=Math.min(100,opSpent/club.op.start*100);
+  const rePct=Math.min(100,reSpent/club.re.start*100);
+
+  // Balance cards
+  const bc=mk('div','card');bc.style.padding='16px';
+  bc.innerHTML=`
+    <div style="font-size:12px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px">FY 2025–26 · Ends May 31</div>
+    <div class="fund-row">
+      <div class="fund-top">
+        <div><div class="fund-label">🟢 Operational</div><div style="font-size:11px;color:var(--ink3)">Dues + SGA · Must spend by year end</div></div>
+        <div style="text-align:right"><div style="font-size:22px;font-weight:900;color:var(--green)">${money(club.op.bal)}</div><div style="font-size:11px;color:var(--ink3)">of ${money(club.op.start)}</div></div>
+      </div>
+      <div class="bar-track"><div class="bar-fill op ${opPct>80?'danger':''}" style="width:${opPct}%"></div></div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:4px">${money(opSpent)} spent · ${(100-opPct).toFixed(0)}% remaining</div>
+    </div>
+    <div class="divider"></div>
+    <div class="fund-row">
+      <div class="fund-top">
+        <div><div class="fund-label">🟣 Restricted</div><div style="font-size:11px;color:var(--ink3)">Donations · Carries over year to year</div></div>
+        <div style="text-align:right"><div style="font-size:22px;font-weight:900;color:var(--p)">${money(club.re.bal)}</div><div style="font-size:11px;color:var(--ink3)">of ${money(club.re.start)}</div></div>
+      </div>
+      <div class="bar-track"><div class="bar-fill re" style="width:${rePct}%"></div></div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:4px">${money(reSpent)} spent · ${(100-rePct).toFixed(0)}% remaining</div>
+    </div>`;
+  el.appendChild(bc);
+
+  // Spending breakdown
+  const clubReqs=S.requests.filter(r=>r.club===S.club&&r.status==='Approved');
+  if(clubReqs.length){
+    const shdr=mk('div','staff-section-hdr');shdr.style.marginTop='8px';
+    shdr.innerHTML='<h3>Spending by Category</h3>';
+    el.appendChild(shdr);
+    const catTotals={};
+    const catIcons={equipment:'🛒',tourney:'🏆',hotel:'🏨',coach:'🧑‍🏫',officials:'🦺',medical:'🩺',other:'📎'};
+    clubReqs.forEach(r=>{catTotals[r.type]=(catTotals[r.type]||0)+Number(r.cost||0);});
+    const maxCat=Math.max(...Object.values(catTotals),1);
+    const spendCard=mk('div','card');spendCard.style.padding='14px';
+    Object.entries(catTotals).sort((a,b)=>b[1]-a[1]).forEach(([cat,total])=>{
+      const row=mk('div','spending-category');
+      row.innerHTML='<div class="sc-icon">'+(catIcons[cat]||'📋')+'</div><div class="sc-body"><div class="sc-label">'+(REQ_TYPES.find(t=>t.key===cat)?.label||cat)+'</div><div class="sc-bar-wrap"><div class="sc-bar" style="width:'+(total/maxCat*100).toFixed(0)+'%"></div></div></div><div class="sc-amount">'+money(total)+'</div>';
+      spendCard.appendChild(row);
+    });
+    el.appendChild(spendCard);
+  }
+
+  // Transactions ledger
+  const thdr=mk('div','staff-section-hdr');thdr.style.marginTop='8px';
+  thdr.innerHTML='<h3>Transactions</h3>';
+  el.appendChild(thdr);
+  const lc=mk('div','card');
+  const ledger=club.ledger;
+  if(!ledger.length){
+    lc.innerHTML='<div style="padding:20px;text-align:center;color:var(--ink3);font-size:13px">No transactions yet</div>';
+  } else {
+    ledger.slice(0,12).forEach(t=>{
+      const row=mk('div','ledger-item');
+      const fundLabel=t.fund==='op'?'Operational':'Restricted';
+      row.innerHTML=`<div class="ledger-dot ${t.type}"></div><div class="ledger-body"><div class="ledger-memo">${esc(t.memo)}</div><div class="ledger-date">${dateStr(t.ts)} · ${esc(fundLabel)}</div></div><div class="ledger-amt ${t.type}">${t.type==='credit'?'+':'-'}${money(t.amt)}</div>`;
+      lc.appendChild(row);
+    });
+  }
+  el.appendChild(lc);
+  return el;
+}
+
+/* ── Staff Tab: Forms ── */
+function staffTabForms(roster,clubReqs){
+  const el=mk('div');
+
+  // Generate mock forms data from roster + requests
+  const hdr=mk('div');
+  hdr.style.cssText='margin-bottom:14px';
+  hdr.innerHTML=`<div style="font-size:15px;font-weight:800;color:var(--ink)">Submitted Forms · ${esc(S.club)}</div><div style="font-size:12px;color:var(--ink3);margin-top:3px">Waivers, medical clearance, and request attachments</div>`;
+  el.appendChild(hdr);
+
+  // Waivers section
+  const whdr=mk('div','staff-section-hdr');
+  whdr.innerHTML='<h3>Liability Waivers</h3>';
+  el.appendChild(whdr);
+  const wCard=mk('div','card');
+  if(!roster.length){
+    wCard.innerHTML='<div style="padding:20px;text-align:center;color:var(--ink3);font-size:13px">No roster data</div>';
+  } else {
+    roster.forEach(p=>{
+      const item=mk('div','form-submission-item');
+      const statusBadge=p.waiver?'<span class="badge green">✓ On File</span>':'<span class="badge red">✕ Missing</span>';
+      item.innerHTML=`<div class="fs-icon">📝</div><div class="fs-body"><div class="fs-title">${esc(p.name)}</div><div class="fs-sub">Liability Waiver · ${p.waiver?'Signed':'Not submitted'}</div></div><div class="fs-status">${statusBadge}</div>`;
+      item.onclick=()=>showPlayerSheet(p);
+      item.style.cursor='pointer';
+      wCard.appendChild(item);
+    });
+  }
+  el.appendChild(wCard);
+
+  // Medical clearance section
+  const mhdr=mk('div','staff-section-hdr');mhdr.style.marginTop='8px';
+  mhdr.innerHTML='<h3>Medical Clearance</h3>';
+  el.appendChild(mhdr);
+  const mCard=mk('div','card');
+  if(!roster.length){
+    mCard.innerHTML='<div style="padding:20px;text-align:center;color:var(--ink3);font-size:13px">No roster data</div>';
+  } else {
+    roster.forEach(p=>{
+      const item=mk('div','form-submission-item');
+      const statusBadge=p.medical?'<span class="badge green">✓ Cleared</span>':'<span class="badge red">✕ Missing</span>';
+      item.innerHTML=`<div class="fs-icon">🩺</div><div class="fs-body"><div class="fs-title">${esc(p.name)}</div><div class="fs-sub">Medical Clearance · ${p.medical?'On file':'Not submitted'}</div></div><div class="fs-status">${statusBadge}</div>`;
+      item.onclick=()=>showPlayerSheet(p);
+      item.style.cursor='pointer';
+      mCard.appendChild(item);
+    });
+  }
+  el.appendChild(mCard);
+
+  // Request attachments / documents
+  const rhdr=mk('div','staff-section-hdr');rhdr.style.marginTop='8px';
+  rhdr.innerHTML='<h3>Request Documents</h3>';
+  el.appendChild(rhdr);
+  const rCard=mk('div','card');
+  const reqsWithDocs=clubReqs.filter(r=>r.cost>=500||r.type==='hotel'||r.type==='coach');
+  if(!reqsWithDocs.length){
+    rCard.innerHTML='<div style="padding:20px;text-align:center;color:var(--ink3);font-size:13px">No documents submitted</div>';
+  } else {
+    reqsWithDocs.forEach(r=>{
+      const t=REQ_TYPES.find(x=>x.key===r.type)||{icon:'📋',label:r.type};
+      const hasDoc=r.status==='Approved';
+      const item=mk('div','form-submission-item');
+      item.innerHTML=`<div class="fs-icon">${t.icon}</div><div class="fs-body"><div class="fs-title">${esc(r.title)}</div><div class="fs-sub">${esc(t.label)} · ${money(r.cost)} · ${esc(r.by)}</div></div><div class="fs-status">${hasDoc?'<span class="badge green">✓ Complete</span>':'<span class="badge amber">⏳ Pending</span>'}</div>`;
+      item.style.cursor='pointer';
+      item.onclick=()=>showReqDetail(r.id);
+      rCard.appendChild(item);
+    });
+  }
+  el.appendChild(rCard);
+  return el;
+}
+
+window.staffQuickNeedInfo=function(id){
+  const r=S.requests.find(x=>x.id===id);if(!r)return;
+  r.status='Needs Info';r.staffNote='More information needed. Please update and resubmit.';
+  pushNotif({icon:'⚠️',title:'More Info Needed',sub:r.title+' was sent back for more information.',club:r.club,type:'warn',reqId:r.id});
+  toast('Sent back for info');render();
+};
+window.staffQuickDeny=function(id){
+  const r=S.requests.find(x=>x.id===id);if(!r)return;
+  r.status='Denied';r.staffNote='Request denied. Contact clubsports@tcu.edu for details.';
+  pushNotif({icon:'❌',title:'Request Denied',sub:r.title+' was denied.',club:r.club,type:'deny',reqId:r.id});
+  toast('Request denied');render();
+};
+
+/* ── APPROVE WITH BALANCE CONFIRMATION ── */
+function showApproveConfirm(id){
+  const r=S.requests.find(x=>x.id===id);if(!r)return;
+  const club=S.clubs[r.club];if(!club)return;
+  const fundKey=r.fund==='restricted'?'re':'op';
+  const fundLabel=r.fund==='restricted'?'Restricted':'Operational';
+  const currentBal=club[fundKey].bal;
+  const newBal=currentBal-Number(r.cost||0);
+  const isLow=newBal<500;const isNeg=newBal<0;
+  const body=mk('div');
+  const confirmBox=mk('div','approve-confirm');
+  confirmBox.innerHTML='<div class="ac-title">✓ Confirm Approval</div><div class="ac-row"><span>Request</span><span>'+esc(r.title)+'</span></div><div class="ac-row"><span>Amount</span><span style="color:var(--red);font-weight:700">-'+money(r.cost||0)+'</span></div><div class="ac-row"><span>Fund</span><span>'+esc(fundLabel)+'</span></div><div class="ac-row"><span>Current balance</span><span>'+money(currentBal)+'</span></div><div class="ac-row"><span>Balance after</span><span style="color:'+(isNeg?'var(--red)':isLow?'var(--amber)':'var(--green)')+';font-weight:900">'+money(newBal)+'</span></div>';
+  body.appendChild(confirmBox);
+  if(isNeg){const a=mk('div','budget-alert');a.innerHTML='<div class="ba-icon">🚨</div><div class="ba-text"><div class="ba-title">Insufficient funds</div><div class="ba-sub">This would put the '+fundLabel+' fund '+money(Math.abs(newBal))+' over budget.</div></div>';body.appendChild(a);}
+  else if(isLow){const a=mk('div','budget-alert warn');a.innerHTML='<div class="ba-icon">⚠️</div><div class="ba-text"><div class="ba-title">Low balance warning</div><div class="ba-sub">Only '+money(newBal)+' will remain in '+fundLabel+' after this approval.</div></div>';body.appendChild(a);}
+  const fundSwitch=mk('div');fundSwitch.style.marginBottom='12px';
+  fundSwitch.innerHTML='<label class="form-label">Charge to fund</label><select class="form-input" id="acFund"><option value="op" '+(r.fund!=='restricted'?'selected':'')+'>Operational ('+money(club.op.bal)+')</option><option value="re" '+(r.fund==='restricted'?'selected':'')+'>Restricted ('+money(club.re.bal)+')</option></select>';
+  body.appendChild(fundSwitch);
+  const noteDiv=mk('div');noteDiv.style.marginBottom='14px';
+  noteDiv.innerHTML='<label class="form-label">Staff note (optional)</label><input class="form-input" id="acNote" placeholder="e.g., PO submitted." value="Approved via FrogFlow."/>';
+  body.appendChild(noteDiv);
+  const btnGroup=mk('div');
+  const confirmBtn=mk('button','btn success'); confirmBtn.textContent='Confirm & Approve'; confirmBtn.onclick=()=>doApproveWithDebit(id);
+  const spacer=mk('div'); spacer.style.height='8px';
+  const cancelBtn=mk('button','btn ghost'); cancelBtn.textContent='Cancel'; cancelBtn.onclick=closeSheet;
+  btnGroup.appendChild(confirmBtn); btnGroup.appendChild(spacer); btnGroup.appendChild(cancelBtn);
+  body.appendChild(btnGroup);
+  openSheet('Approve Request',body);
+}
+window.doApproveWithDebit=function(id){
+  const r=S.requests.find(x=>x.id===id);if(!r)return;
+  const fund=document.getElementById('acFund')?.value||'op';
+  const note=document.getElementById('acNote')?.value||'Approved via FrogFlow.';
+  r.status='Approved';r.staffNote=note;r.fund=fund==='re'?'restricted':'operational';
+  const amt=Number(r.cost||0);
+  if(amt>0)addTxn(r.club,{fund,type:'debit',amt,memo:'Approved: '+r.title,reqId:r.id});
+  pushNotif({icon:'✅',title:'Request Approved',sub:r.title+' was approved. '+money(amt)+' charged to '+(fund==='re'?'Restricted':'Operational')+' fund.',club:r.club,type:'approve',reqId:r.id});
+  toast('Approved & ledger updated ✓');closeSheet();render();
+};
+
+
+function addTxn(club,{fund,type,amt,memo,reqId=null}){
+  const c=S.clubs[club]; if(!c) return;
+  const a=Number(amt||0);
+  c[fund].bal+=(type==='credit'?1:-1)*a;
+  c.ledger.unshift({id:'T'+uid(),ts:new Date().toISOString(),fund,type,amt:a,memo,reqId});
+}
+
+/* ── RENDER ── */
+function render(){
+  const root=$('#pageContent');
+  root.innerHTML='';
+  const p=document.createElement('div');
+  p.className='page';
+  const isStaff=S.role==='staff';
+
+  // Update sidebar and badge
+  updateSidebar();
+  updateBadge();
+
+  if(isStaff){
+    // Staff gets two views: "All Clubs" dashboard or per-club tabbed view
+    if(S.tab==='staffdash'){
+      p.appendChild(pgStaffDash());
+    } else if(S.tab==='qa'){
+      p.appendChild(pgQAOnly());
+    } else if(S.tab==='settings'){
+      p.appendChild(pgSettings());
+    } else if(S.tab==='announcements'){
+      p.appendChild(pgAnnouncements());
+    } else if(S.tab==='documents'){
+      p.appendChild(pgDocuments());
+    } else {
+      p.appendChild(pgStaffClubView());
+    }
+  } else {
+    if(S.tab==='home')      p.appendChild(pgHome());
+    if(S.tab==='requests')  p.appendChild(pgRequests());
+    if(S.tab==='budget')    p.appendChild(pgBudget());
+    if(S.tab==='roster')    p.appendChild(pgRoster());
+    if(S.tab==='more')      p.appendChild(pgMore());
+    if(S.tab==='documents') p.appendChild(pgDocuments());
+    if(S.tab==='qa')        p.appendChild(pgQAOnly());
+    if(S.tab==='settings')  p.appendChild(pgSettings());
+  }
+  root.appendChild(p);
+}
+
+function updateSidebar(){
+  const sidebar=$('#sidebar');
+  if(!sidebar) return;
+  const isStaff=S.role==='staff';
+  sidebar.innerHTML='';
+
+  if(isStaff){
+    // Staff sidebar: Dashboard + Club Manager + Announcements + Policy Help + Settings
+    const sec1=mk('div','sidebar-section'); sec1.textContent='Staff'; sidebar.appendChild(sec1);
+
+    const dashBtn=mk('button','nav-item'+(S.tab==='staffdash'?' active':''));
+    dashBtn.dataset.tab='staffdash';
+    dashBtn.innerHTML='<span class="nav-icon">📊</span><span class="nav-label">All Clubs</span>';
+    dashBtn.onclick=()=>setTab('staffdash');
+    sidebar.appendChild(dashBtn);
+
+    const clubBtn=mk('button','nav-item'+(S.tab==='clubview'?' active':''));
+    clubBtn.dataset.tab='clubview';
+    clubBtn.innerHTML='<span class="nav-icon">🏟️</span><span class="nav-label">Club Manager</span>';
+    clubBtn.onclick=()=>setTab('clubview');
+    sidebar.appendChild(clubBtn);
+
+    const annBtn=mk('button','nav-item'+(S.tab==='announcements'?' active':''));
+    annBtn.dataset.tab='announcements';
+    annBtn.innerHTML='<span class="nav-icon">📢</span><span class="nav-label">Announcements</span>';
+    annBtn.onclick=()=>setTab('announcements');
+    sidebar.appendChild(annBtn);
+
+    const sec2=mk('div','sidebar-section'); sec2.textContent='More'; sidebar.appendChild(sec2);
+
+    const qaBtn=mk('button','nav-item'+(S.tab==='qa'?' active':''));
+    qaBtn.dataset.tab='qa';
+    qaBtn.innerHTML='<span class="nav-icon">❓</span><span class="nav-label">Policy Help</span>';
+    qaBtn.onclick=()=>{S.tab='qa';render();};
+    sidebar.appendChild(qaBtn);
+
+    const settBtn=mk('button','nav-item'+(S.tab==='settings'?' active':''));
+    settBtn.dataset.tab='settings';
+    settBtn.innerHTML='<span class="nav-icon">⚙️</span><span class="nav-label">Settings</span>';
+    settBtn.onclick=()=>setTab('settings');
+    sidebar.appendChild(settBtn);
+  } else {
+    // Student sidebar: original nav
+    const sec1=mk('div','sidebar-section'); sec1.textContent='Main'; sidebar.appendChild(sec1);
+
+    [
+      {tab:'home',icon:'🏠',label:'Home'},
+      {tab:'requests',icon:'📋',label:'Requests'},
+      {tab:'budget',icon:'💰',label:'Budget'},
+      {tab:'roster',icon:'👥',label:'Roster'},
+    ].forEach(n=>{
+      const btn=mk('button','nav-item'+(S.tab===n.tab?' active':''));
+      btn.dataset.tab=n.tab;
+      let badgeHtml='';
+      if(n.tab==='requests'){
+        const open=S.requests.filter(r=>['Submitted','Needs Info','In Review'].includes(r.status)).length;
+        if(open) badgeHtml=`<span class="nav-badge">${open}</span>`;
+      }
+      btn.innerHTML=`<span class="nav-icon">${n.icon}</span><span class="nav-label">${n.label}</span>${badgeHtml}`;
+      btn.onclick=()=>setTab(n.tab);
+      sidebar.appendChild(btn);
+    });
+
+    const sec2=mk('div','sidebar-section'); sec2.textContent='More'; sidebar.appendChild(sec2);
+
+    [{tab:'more',icon:'📅',label:'Schedule'},{tab:'documents',icon:'📁',label:'Documents'},{tab:'qa',icon:'❓',label:'Policy Help'},{tab:'settings',icon:'⚙️',label:'Settings'}].forEach(n=>{
+      const btn=mk('button','nav-item'+(S.tab===n.tab?' active':''));
+      btn.dataset.tab=n.tab;
+      btn.innerHTML=`<span class="nav-icon">${n.icon}</span><span class="nav-label">${n.label}</span>`;
+      btn.onclick=()=>setTab(n.tab);
+      sidebar.appendChild(btn);
+    });
+  }
+}
+
+function updateBadge(){
+  const open=S.requests.filter(r=>['Submitted','Needs Info','In Review'].includes(r.status)).length;
+  const b=$('#navBadge');
+  if(b){
+    b.textContent=open;
+    b.style.display=open?'grid':'none';
+  }
+}
+
+function setTab(name){
+  S.tab=name;
+  $$('.nav-item').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+  render();
+  const mc=document.getElementById('scrollArea');
+  if(mc) mc.scrollTop=0;
+}
+
+/* ── HOME PAGE ── */
+function pgHome(){
+  const el=mk('div');
+  const isStaff=S.role==='staff';
+  const club=S.clubs[S.club];
+  const roster=S.roster[S.club]||[];
+  const elig=roster.filter(p=>p.status==='Eligible').length;
+  const open=S.requests.filter(r=>['Submitted','Needs Info','In Review'].includes(r.status)).length;
+  const totalBal=(club?.op.bal||0)+(club?.re.bal||0);
+
+  // Greeting
+  const g=mk('div','greeting');
+  g.innerHTML=`
+    <div class="greeting-top">
+      <div>
+        <h2>${isStaff?'Good day,\nJordan':'Hey,\nColby 👋'}</h2>
+        <div class="sub">${isStaff?'Rec Center Staff':'${S.club} · President'}</div>
+      </div>
+    </div>
+    <div class="greeting-stats">
+      <div class="gstat"><div class="gv">${open}</div><div class="gl">Open</div></div>
+      <div class="gstat"><div class="gv">${money(totalBal)}</div><div class="gl">Budget</div></div>
+      <div class="gstat"><div class="gv">${elig}/${roster.length}</div><div class="gl">Eligible</div></div>
+    </div>`;
+  el.appendChild(g);
+
+  // Quick actions
+  const qhdr=mk('div','sec-hdr');
+  qhdr.innerHTML='<h3>Quick Actions</h3>';
+  el.appendChild(qhdr);
+  const qg=mk('div','qa-grid');
+  [
+    {ico:'🛒',lbl:'New Purchase',sub:'Equipment, fees, gear',fn:()=>showNewReq('equipment')},
+    {ico:'🏨',lbl:'Book Travel',sub:'Hotels & transport',fn:()=>showNewReq('hotel')},
+    {ico:'🏆',lbl:'Tournament Entry',sub:'Register your team',fn:()=>showNewReq('tourney')},
+    {ico:'🧑‍🏫',lbl:'Coach Payment',sub:'Stipend request',fn:()=>showNewReq('coach')},
+  ].forEach(a=>{
+    const b=mk('button','qa-btn');
+    b.innerHTML=`<span class="qa-ico">${a.ico}</span><span class="qa-lbl">${a.lbl}</span><span class="qa-sub">${a.sub}</span>`;
+    b.onclick=a.fn; qg.appendChild(b);
+  });
+  el.appendChild(qg);
+
+  // Upcoming events (2)
+  const upcoming=S.events.filter(e=>e.club===S.club).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,2);
+  if(upcoming.length){
+    const ehdr=mk('div','sec-hdr');
+    ehdr.innerHTML='<h3>Coming Up</h3><button onclick="setTab(\'more\')">See all</button>';
+    el.appendChild(ehdr);
+    const ec=mk('div','card');
+    upcoming.forEach(e=>{
+      const d=new Date(e.date);
+      const row=mk('div','event-row');
+      const colors={Practice:'#4d1979',Game:'#c0242b',Travel:'#0e7a6e',Meeting:'#c47b0a',Tournament:'#c8a430'};
+      row.innerHTML=`
+        <div class="event-date-block">
+          <div class="eday">${d.getDate()}</div>
+          <div class="emon">${d.toLocaleDateString('en-US',{month:'short'})}</div>
+        </div>
+        <div class="event-info">
+          <div class="event-title">${esc(e.title)}</div>
+          <div class="event-meta">${esc(e.time)} · ${esc(e.loc)}</div>
+        </div>
+        <div class="event-type-dot" style="background:${colors[e.type]||'#888'}"></div>`;
+      ec.appendChild(row);
+    });
+    el.appendChild(ec);
+  }
+
+  // Announcements
+  const ahdr=mk('div','sec-hdr');
+  ahdr.innerHTML='<h3>Announcements</h3>';
+  el.appendChild(ahdr);
+  S.announcements.forEach(a=>{
+    const ann=mk('div','announce');
+    ann.innerHTML=`<div class="ann-label">📢 From Staff</div><div class="ann-title">${esc(a.title)}</div><div class="ann-body">${esc(a.body)}</div><div class="ann-meta">${esc(a.by)} · ${esc(a.date)}</div>`;
+    el.appendChild(ann);
+  });
+
+  // If staff: show review queue preview
+  if(isStaff){
+    const needsAction=S.requests.filter(r=>['Submitted','In Review'].includes(r.status));
+    if(needsAction.length){
+      const rhdr=mk('div','sec-hdr');
+      rhdr.innerHTML=`<h3>Needs Review (${needsAction.length})</h3><button onclick="setTab('requests')">View all</button>`;
+      el.appendChild(rhdr);
+      const rc=mk('div','card');
+      needsAction.slice(0,3).forEach(r=>rc.appendChild(reqFeedItem(r)));
+      el.appendChild(rc);
+    }
+  }
+
+  return el;
+}
+
+/* ── REQUESTS PAGE ── */
+function pgRequests(){
+  const el=mk('div');
+  const isStaff=S.role==='staff';
+
+  // Header + new button
+  const hdr=mk('div');
+  hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:14px';
+  hdr.innerHTML=`<div style="font-size:20px;font-weight:800">Requests</div>`;
+  const nb=mk('button','btn primary sm');
+  nb.innerHTML='+ New'; nb.onclick=()=>showNewReq();
+  hdr.appendChild(nb);
+  el.appendChild(hdr);
+
+  // Filter chips
+  const filters=mk('div');
+  filters.style.cssText='display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:4px';
+  filters.style.cssText+=';scrollbar-width:none';
+  ['All','Submitted','In Review','Needs Info','Approved','Denied'].forEach(f=>{
+    const b=mk('button');
+    b.style.cssText=`padding:7px 14px;border-radius:999px;border:1.5px solid ${S.reqFilter===f?'var(--p)':'var(--border)'};background:${S.reqFilter===f?'var(--p)':'#fff'};color:${S.reqFilter===f?'#fff':'var(--ink2)'};font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0`;
+    b.textContent=f;
+    b.onclick=()=>{S.reqFilter=f;render()};
+    filters.appendChild(b);
+  });
+  el.appendChild(filters);
+
+  let items=[...S.requests];
+  if(S.reqFilter!=='All') items=items.filter(r=>r.status===S.reqFilter);
+  items.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+
+  if(!items.length){
+    const emp=mk('div','empty');
+    emp.innerHTML='<div class="e-ico">📋</div><div class="e-txt">No requests yet</div><div class="e-sub">Tap + New to submit one</div>';
+    el.appendChild(emp);
+    return el;
+  }
+
+  const card=mk('div','card');
+  items.forEach(r=>card.appendChild(reqFeedItem(r,isStaff)));
+  el.appendChild(card);
+  return el;
+}
+
+function reqFeedItem(r, showActions=false){
+  const t=REQ_TYPES.find(x=>x.key===r.type)||{icon:'📋',label:r.type};
+  const item=mk('div','feed-item');
+  const statusColor={Approved:'green','Needs Info':'amber',Denied:'red',Submitted:'purple','In Review':'purple'}[r.status]||'gray';
+  item.innerHTML=`
+    <div class="fi-icon ${statusColor}">${t.icon}</div>
+    <div class="fi-body">
+      <div class="fi-title">${esc(r.title)}</div>
+      <div class="fi-sub">${esc(r.by)} · ${esc(r.club)}</div>
+    </div>
+    <div class="fi-right">
+      <span class="badge ${statusColor}">${esc(r.status)}</span>
+      <span style="font-size:13px;font-weight:700;color:var(--ink2)">${money(r.cost)}</span>
+    </div>`;
+  item.onclick=()=>showReqDetail(r.id);
+  return item;
+}
+
+/* ── BUDGET PAGE ── */
+function pgBudget(){
+  const el=mk('div');
+  const isStaff=S.role==='staff';
+
+  const hdr=mk('div');
+  hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:14px';
+  hdr.innerHTML=`<div style="font-size:20px;font-weight:800">Budget</div>`;
+  const hdrBtns=mk('div');hdrBtns.style.cssText='display:flex;gap:8px';
+  const expBtn=mk('button','export-btn');
+  expBtn.innerHTML='📥 Export';
+  expBtn.onclick=()=>exportFinances(S.club);
+  hdrBtns.appendChild(expBtn);
+  if(isStaff){
+    const pb=mk('button','btn primary sm');
+    pb.innerHTML='+ Post Update'; pb.onclick=showPostTxn;
+    hdrBtns.appendChild(pb);
+  }
+  hdr.appendChild(hdrBtns);
+  el.appendChild(hdr);
+
+  // Club picker for staff
+  if(isStaff){
+    const pc=mk('div','card');
+    pc.style.padding='14px';
+    pc.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:8px">VIEWING CLUB</div>';
+    const sel=mk('select','form-input');
+    Object.keys(S.clubs).forEach(c=>{
+      const o=document.createElement('option');
+      o.value=c; o.textContent=c; if(c===S.club) o.selected=true;
+      sel.appendChild(o);
+    });
+    sel.onchange=e=>{S.club=e.target.value;$('#topClubName').textContent=S.club;render()};
+    pc.appendChild(sel); el.appendChild(pc);
+  }
+
+  const club=S.clubs[S.club];
+  const opSpent=club.op.start-club.op.bal;
+  const reSpent=club.re.start-club.re.bal;
+  const opPct=Math.min(100,opSpent/club.op.start*100);
+  const rePct=Math.min(100,reSpent/club.re.start*100);
+
+  // Balance cards
+  const bc=mk('div','card');
+  bc.style.padding='16px';
+  bc.innerHTML=`
+    <div style="font-size:12px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px">FY 2025–26 · Ends May 31</div>
+    <div class="fund-row">
+      <div class="fund-top">
+        <div>
+          <div class="fund-label">🟢 Operational</div>
+          <div style="font-size:11px;color:var(--ink3)">Dues + SGA · Must spend by year end</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:22px;font-weight:900;color:var(--green)">${money(club.op.bal)}</div>
+          <div style="font-size:11px;color:var(--ink3)">of ${money(club.op.start)}</div>
+        </div>
+      </div>
+      <div class="bar-track"><div class="bar-fill op ${opPct>80?'danger':''}" style="width:${opPct}%"></div></div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:4px">${money(opSpent)} spent · ${(100-opPct).toFixed(0)}% remaining</div>
+    </div>
+    <div class="divider"></div>
+    <div class="fund-row">
+      <div class="fund-top">
+        <div>
+          <div class="fund-label">🟣 Restricted</div>
+          <div style="font-size:11px;color:var(--ink3)">Donations · Carries over year to year</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:22px;font-weight:900;color:var(--p)">${money(club.re.bal)}</div>
+          <div style="font-size:11px;color:var(--ink3)">of ${money(club.re.start)}</div>
+        </div>
+      </div>
+      <div class="bar-track"><div class="bar-fill re" style="width:${rePct}%"></div></div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:4px">${money(reSpent)} spent · ${(100-rePct).toFixed(0)}% remaining</div>
+    </div>`;
+  el.appendChild(bc);
+
+  // Recent transactions
+  const thdr=mk('div','sec-hdr');
+  thdr.innerHTML='<h3>Transactions</h3>';
+  el.appendChild(thdr);
+
+  const lc=mk('div','card');
+  const ledger=club.ledger;
+  if(!ledger.length){
+    lc.innerHTML='<div style="padding:20px;text-align:center;color:var(--ink3);font-size:13px">No transactions yet</div>';
+  } else {
+    ledger.slice(0,8).forEach(t=>{
+      const row=mk('div','ledger-item');
+      const fundLabel=t.fund==='op'?'Operational':'Restricted';
+      row.innerHTML=`
+        <div class="ledger-dot ${t.type}"></div>
+        <div class="ledger-body">
+          <div class="ledger-memo">${esc(t.memo)}</div>
+          <div class="ledger-date">${dateStr(t.ts)} · ${esc(fundLabel)}</div>
+        </div>
+        <div class="ledger-amt ${t.type}">${t.type==='credit'?'+':'-'}${money(t.amt)}</div>`;
+      lc.appendChild(row);
+    });
+  }
+  el.appendChild(lc);
+  return el;
+}
+
+function showPostTxn(){
+  const body=mk('div');
+  body.innerHTML=`
+    <div class="form-group">
+      <label class="form-label">Club</label>
+      <select class="form-input" id="ptClub">
+        ${Object.keys(S.clubs).map(c=>`<option ${c===S.club?'selected':''}>${esc(c)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Fund</label>
+        <select class="form-input" id="ptFund"><option value="op">Operational</option><option value="re">Restricted</option></select>
+      </div>
+      <div><label class="form-label">Type</label>
+        <select class="form-input" id="ptType"><option value="credit">Credit ↑</option><option value="debit">Debit ↓</option></select>
+      </div>
+    </div>
+    <div><label class="form-label">Amount (USD)</label><input class="form-input" id="ptAmt" type="number" min="1" placeholder="0"/></div>
+    <div><label class="form-label">Memo</label><input class="form-input" id="ptMemo" placeholder="e.g., SGA allocation, Alumni donation"/></div>
+    <div class="mt-16">
+      <button class="btn primary" onclick="doPostTxn()">Post Transaction</button>
+      <div style="height:8px"></div>
+      <button class="btn ghost" onclick="closeSheet()">Cancel</button>
+    </div>`;
+  openSheet('Post Budget Update',body);
+}
+window.doPostTxn=function(){
+  const club=$('#ptClub').value;
+  const amt=Number($('#ptAmt').value||0);
+  if(!amt||amt<=0){toast('Enter a valid amount');return;}
+  addTxn(club,{fund:$('#ptFund').value,type:$('#ptType').value,amt,memo:$('#ptMemo').value});
+  toast('Transaction posted ✓');
+  closeSheet(); render();
+};
+
+/* ── ROSTER PAGE ── */
+function pgRoster(){
+  const el=mk('div');
+  const players=S.roster[S.club]||[];
+  const elig=players.filter(p=>p.status==='Eligible').length;
+  const pend=players.filter(p=>p.status==='Pending').length;
+  const inel=players.filter(p=>p.status==='Ineligible').length;
+
+  const hdr=mk('div');
+  hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:14px';
+  hdr.innerHTML=`<div style="font-size:20px;font-weight:800">Roster</div>`;
+  const hdrBtns=mk('div');hdrBtns.style.cssText='display:flex;gap:8px';
+  const expBtn=mk('button','export-btn');
+  expBtn.innerHTML='📥 Export';
+  expBtn.onclick=()=>exportRoster(S.club);
+  const ab=mk('button','btn primary sm');
+  ab.innerHTML='+ Add'; ab.onclick=showAddPlayer;
+  hdrBtns.appendChild(expBtn);hdrBtns.appendChild(ab);
+  hdr.appendChild(hdrBtns); el.appendChild(hdr);
+
+  // Status summary
+  const sc=mk('div','card');
+  sc.style.padding='14px';
+  sc.innerHTML=`
+    <div style="display:flex;gap:10px">
+      <div style="flex:1;text-align:center">
+        <div style="font-size:26px;font-weight:900;color:var(--green)">${elig}</div>
+        <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.4px">Eligible</div>
+      </div>
+      <div style="flex:1;text-align:center;border-left:1px solid var(--border);border-right:1px solid var(--border)">
+        <div style="font-size:26px;font-weight:900;color:var(--amber)">${pend}</div>
+        <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.4px">Pending</div>
+      </div>
+      <div style="flex:1;text-align:center">
+        <div style="font-size:26px;font-weight:900;color:var(--red)">${inel}</div>
+        <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.4px">Ineligible</div>
+      </div>
+    </div>`;
+  el.appendChild(sc);
+
+  if(pend+inel>0){
+    const alert=mk('div','info-box warn');
+    alert.style.marginBottom='12px';
+    alert.innerHTML=`<div class="ib-label">⚠️ Action Required</div><div class="ib-text">${pend+inel} player(s) cannot compete until waivers and medical clearance are on file.</div>`;
+    el.appendChild(alert);
+  }
+
+  const rc=mk('div','card');
+  players.forEach(p=>{
+    const row=mk('div','player-row');
+    const statusDot=p.status==='Eligible'?'eligible':p.status==='Pending'?'pending':'ineligible';
+    row.innerHTML=`
+      <div class="avatar">${initials(p.name)}</div>
+      <div class="player-info">
+        <div class="player-name">${esc(p.name)}</div>
+        <div class="player-meta">${esc(p.year)} · ${esc(p.pos)}</div>
+      </div>
+      <div class="elig-dot ${statusDot}"></div>`;
+    row.onclick=()=>showPlayerSheet(p);
+    rc.appendChild(row);
+  });
+  el.appendChild(rc);
+  return el;
+}
+
+function showAddPlayer(){
+  const body=mk('div');
+  body.innerHTML=`
+    <div class="form-row">
+      <div><label class="form-label">First Name</label><input class="form-input" id="apFn" placeholder="First"/></div>
+      <div><label class="form-label">Last Name</label><input class="form-input" id="apLn" placeholder="Last"/></div>
+    </div>
+    <div><label class="form-label">TCU Email</label><input class="form-input" id="apEmail" type="email" placeholder="name@tcu.edu"/></div>
+    <div class="form-row">
+      <div><label class="form-label">Year</label>
+        <select class="form-input" id="apYear"><option>Freshman</option><option>Sophomore</option><option>Junior</option><option>Senior</option></select>
+      </div>
+      <div><label class="form-label">Position</label><input class="form-input" id="apPos" placeholder="e.g., Forward"/></div>
+    </div>
+    <div class="mt-16">
+      <button class="btn primary" onclick="doAddPlayer()">Add to Roster</button>
+      <div style="height:8px"></div>
+      <button class="btn ghost" onclick="closeSheet()">Cancel</button>
+    </div>`;
+  openSheet('Add Player',body);
+}
+window.doAddPlayer=function(){
+  const fn=$('#apFn').value.trim(),ln=$('#apLn').value.trim();
+  if(!fn||!ln){toast('Enter full name');return;}
+  if(!S.roster[S.club]) S.roster[S.club]=[];
+  S.roster[S.club].push({id:'r'+uid(),name:`${fn} ${ln}`,year:$('#apYear').value,pos:$('#apPos').value||'—',email:$('#apEmail').value,status:'Pending',waiver:false,medical:false});
+  toast(`${fn} ${ln} added`);
+  closeSheet(); render();
+};
+
+function showPlayerSheet(p){
+  const body=mk('div');
+  const statusBadge={Eligible:`<span class="badge green">✓ Eligible</span>`,Pending:`<span class="badge amber">⏳ Pending</span>`,Ineligible:`<span class="badge red">✕ Ineligible</span>`}[p.status]||'';
+
+  // Hero
+  const heroDiv=mk('div','player-hero');
+  // Check for profile photo
+  const photoKey='player_'+p.id;
+  if(S.uploads[photoKey]){
+    heroDiv.innerHTML=`<img src="${S.uploads[photoKey].url}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:10px"/>`;
+  } else {
+    heroDiv.innerHTML=`<div class="ph-avatar" style="background:linear-gradient(135deg,var(--p),var(--p3))">${initials(p.name)}</div>`;
+  }
+  heroDiv.innerHTML+=`<h3>${esc(p.name)}</h3><div class="ph-meta">${esc(p.year)} · ${esc(p.pos)}</div><div style="margin-top:8px">${statusBadge}</div>`;
+  body.appendChild(heroDiv);
+
+  // Waiver section
+  const waiverDiv=mk('div');
+  waiverDiv.style.cssText='padding:14px 0;border-bottom:1px solid var(--border)';
+  const waiverRow=mk('div');
+  waiverRow.style.cssText='display:flex;align-items:center;gap:12px';
+  waiverRow.innerHTML=`<div class="check-circle ${p.waiver?'ok':'fail'}">${p.waiver?'✓':'✕'}</div><div class="check-text"><strong>Liability Waiver</strong><span>${p.waiver?'On file and current':'Missing — required to compete'}</span></div>`;
+  waiverDiv.appendChild(waiverRow);
+
+  const waiverKey='waiver_'+p.id;
+  if(S.uploads[waiverKey]){
+    waiverDiv.appendChild(createFileChip(S.uploads[waiverKey],()=>{delete S.uploads[waiverKey];}));
+  } else if(!p.waiver){
+    const upBtn=createInlineUploadBtn('Upload Waiver','.pdf,.jpg,.png',f=>{
+      S.uploads[waiverKey]={name:f.name,size:f.size,type:f.type,url:URL.createObjectURL(f)};
+      toast(f.name+' uploaded ✓');
+      closeSheet(); showPlayerSheet(p);
+    });
+    upBtn.style.marginTop='8px';
+    waiverDiv.appendChild(upBtn);
+  }
+  body.appendChild(waiverDiv);
+
+  // Medical section
+  const medDiv=mk('div');
+  medDiv.style.cssText='padding:14px 0;border-bottom:1px solid var(--border)';
+  const medRow=mk('div');
+  medRow.style.cssText='display:flex;align-items:center;gap:12px';
+  medRow.innerHTML=`<div class="check-circle ${p.medical?'ok':'fail'}">${p.medical?'✓':'✕'}</div><div class="check-text"><strong>Medical Clearance</strong><span>${p.medical?'Cleared for participation':'Missing — required before first practice'}</span></div>`;
+  medDiv.appendChild(medRow);
+
+  const medKey='medical_'+p.id;
+  if(S.uploads[medKey]){
+    medDiv.appendChild(createFileChip(S.uploads[medKey],()=>{delete S.uploads[medKey];}));
+  } else if(!p.medical){
+    const upBtn=createInlineUploadBtn('Upload Medical Form','.pdf,.jpg,.png',f=>{
+      S.uploads[medKey]={name:f.name,size:f.size,type:f.type,url:URL.createObjectURL(f)};
+      toast(f.name+' uploaded ✓');
+      closeSheet(); showPlayerSheet(p);
+    });
+    upBtn.style.marginTop='8px';
+    medDiv.appendChild(upBtn);
+  }
+  body.appendChild(medDiv);
+
+  body.innerHTML+=`<div style="margin-top:14px;font-size:12px;color:var(--ink3)">Email: ${esc(p.email)}</div>`;
+  const btns=mk('div','mt-16');
+  if(!p.waiver||!p.medical){
+    const markBtn=mk('button','btn success');
+    markBtn.textContent='Mark All Complete & Eligible';
+    markBtn.onclick=()=>window.markEligible(p.id);
+    btns.appendChild(markBtn);
+    btns.appendChild(mk('div'));btns.lastChild.style.height='8px';
+  }
+  const closeBtn=mk('button','btn ghost');
+  closeBtn.textContent='Close'; closeBtn.onclick=closeSheet;
+  btns.appendChild(closeBtn);
+  body.appendChild(btns);
+
+  openSheet(p.name,body);
+}
+window.markEligible=function(id){
+  for(const club of Object.values(S.roster)){
+    const p=club.find(x=>x.id===id);
+    if(p){p.status='Eligible';p.waiver=true;p.medical=true;break;}
+  }
+  toast('Player marked eligible ✓');
+  closeSheet(); render();
+};
+
+/* ── MORE PAGE (Calendar + Q&A) ── */
+function pgMore(){
+  const el=mk('div');
+  el.innerHTML=`<div style="font-size:20px;font-weight:800;margin-bottom:14px">More</div>`;
+
+  // Schedule section
+  const shdr=mk('div','sec-hdr');
+  shdr.innerHTML='<h3>Schedule</h3><button onclick="showAddEvent()">+ Add</button>';
+  el.appendChild(shdr);
+
+  const events=S.events.filter(e=>e.club===S.club).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const calCard=mk('div','card');
+
+  // Mini cal strip
+  const strip=mk('div','cal-strip');
+  strip.style.padding='12px 12px 8px';
+  const today=new Date();
+  for(let i=0;i<10;i++){
+    const d=new Date(today.getTime()+i*864e5);
+    const ds=d.toISOString().slice(0,10);
+    const hasEv=events.some(e=>e.date===ds);
+    const day=mk('div',`cal-day${i===0?' today':''}${hasEv?' has-ev':''}`);
+    day.innerHTML=`<div class="cd-dow">${['Su','Mo','Tu','We','Th','Fr','Sa'][d.getDay()]}</div><div class="cd-d">${d.getDate()}</div>${hasEv?'<div class="cd-pip"></div>':'<div style="height:5px"></div>'}`;
+    strip.appendChild(day);
+  }
+  calCard.appendChild(strip);
+
+  events.slice(0,5).forEach(e=>{
+    const d=new Date(e.date);
+    const days=daysUntil(e.date);
+    const colors={Practice:'var(--p)',Game:'var(--red)',Travel:'var(--green)',Meeting:'var(--amber)',Tournament:'var(--gold)'};
+    const row=mk('div','event-row');
+    row.innerHTML=`
+      <div class="event-date-block">
+        <div class="eday">${d.getDate()}</div>
+        <div class="emon">${d.toLocaleDateString('en-US',{month:'short'})}</div>
+      </div>
+      <div class="event-info">
+        <div class="event-title">${esc(e.title)}</div>
+        <div class="event-meta">${esc(e.time)} · ${esc(e.loc)}</div>
+      </div>
+      <div class="event-type-dot" style="background:${colors[e.type]||'#888'}"></div>`;
+    calCard.appendChild(row);
+  });
+  el.appendChild(calCard);
+
+  // Q&A section
+  const qhdr=mk('div','sec-hdr');
+  qhdr.style.marginTop='8px';
+  qhdr.innerHTML='<h3>Policy Help</h3>';
+  el.appendChild(qhdr);
+
+  const qcard=mk('div','card');
+  qcard.style.overflow='hidden';
+
+  // Quick question buttons
+  const quickWrap=mk('div');
+  quickWrap.style.cssText='display:flex;flex-wrap:wrap;gap:6px;padding:12px 14px;border-bottom:1px solid var(--border)';
+  ['travel deadlines','purchase over $500','roster eligibility','operational vs restricted'].forEach(q=>{
+    const b=mk('button');
+    b.style.cssText='padding:6px 12px;border-radius:999px;border:1.5px solid var(--p-mid);background:var(--p-soft);color:var(--p);font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer';
+    b.textContent=q; b.onclick=()=>askQ(q);
+    quickWrap.appendChild(b);
+  });
+  qcard.appendChild(quickWrap);
+
+  const chatWrap=mk('div','chat-wrap');
+  chatWrap.style.padding='12px 14px';
+  chatWrap.id='chatBox';
+  qcard.appendChild(chatWrap);
+
+  const inputRow=mk('div','qa-input-row');
+  inputRow.innerHTML=`<input id="qaIn" placeholder="Ask a policy question…"/><button class="qa-send" onclick="sendQ()">↑</button>`;
+  qcard.appendChild(inputRow);
+  el.appendChild(qcard);
+
+  setTimeout(()=>{
+    drawChat();
+    $('#qaIn')?.addEventListener('keydown',e=>{if(e.key==='Enter')sendQ()});
+  },0);
+
+  return el;
+}
+
+window.showAddEvent=function(){
+  const body=mk('div');
+  body.innerHTML=`
+    <div><label class="form-label">Event Title</label><input class="form-input" id="evTitle" placeholder="e.g., vs. UT-Arlington"/></div>
+    <div class="form-row">
+      <div><label class="form-label">Type</label>
+        <select class="form-input" id="evType"><option>Practice</option><option>Game</option><option>Travel</option><option>Meeting</option><option>Tournament</option></select>
+      </div>
+      <div><label class="form-label">Date</label><input class="form-input" id="evDate" type="date"/></div>
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Time</label><input class="form-input" id="evTime" placeholder="7:00 PM"/></div>
+      <div><label class="form-label">Location</label><input class="form-input" id="evLoc" placeholder="Venue"/></div>
+    </div>
+    <div class="mt-16">
+      <button class="btn primary" onclick="doAddEvent()">Add Event</button>
+      <div style="height:8px"></div>
+      <button class="btn ghost" onclick="closeSheet()">Cancel</button>
+    </div>`;
+  openSheet('Add Event',body);
+};
+window.doAddEvent=function(){
+  const title=$('#evTitle').value.trim();
+  if(!title){toast('Enter a title');return;}
+  S.events.push({id:'e'+uid(),club:S.club,type:$('#evType').value,title,date:$('#evDate').value||new Date().toISOString().slice(0,10),time:$('#evTime').value||'TBD',loc:$('#evLoc').value||'TBD'});
+  toast('Event added ✓');
+  closeSheet(); render();
+};
+
+function drawChat(){
+  const box=$('#chatBox'); if(!box) return;
+  box.innerHTML='';
+  S.qa.forEach(m=>{
+    const b=mk('div',`bubble ${m.from}`);
+    b.textContent=m.text;
+    box.appendChild(b);
+  });
+  box.scrollTop=box.scrollHeight;
+}
+window.sendQ=function(){ askQ($('#qaIn')?.value); if($('#qaIn')) $('#qaIn').value=''; };
+window.askQ=function(q){
+  q=(q||'').trim(); if(!q) return;
+  if($('#qaIn')) $('#qaIn').value='';
+  S.qa.push({from:'me',text:q});
+  const ql=q.toLowerCase();
+  const match=POLICIES.find(p=>p.kw.some(k=>ql.includes(k)));
+  S.qa.push({from:'ai',text:match?match.text:"I don't have a specific answer for that. Contact your Rec Center liaison at clubsports@tcu.edu."});
+  drawChat();
+};
+
+/* ── NEW REQUEST SHEET ── */
+let _reqType='equipment';
+window.showNewReq=function(preType){
+  _reqType=preType||'equipment';
+  S._pendingAttachments=[];
+  const body=mk('div');
+
+  // Type selector
+  const typeRow=mk('div','type-scroll');
+  REQ_TYPES.forEach(t=>{
+    const chip=mk('div',`type-chip${_reqType===t.key?' sel':''}`);
+    chip.dataset.type=t.key;
+    chip.innerHTML=`<span class="tc-ico">${t.icon}</span><span class="tc-lbl">${t.label}</span>`;
+    chip.onclick=()=>{
+      _reqType=t.key;
+      $$('.type-chip',body).forEach(c=>c.classList.toggle('sel',c.dataset.type===t.key));
+      renderReqFields(body);
+    };
+    typeRow.appendChild(chip);
+  });
+  body.appendChild(typeRow);
+
+  const fieldsArea=mk('div');
+  fieldsArea.id='reqFields';
+  body.appendChild(fieldsArea);
+  renderReqFields(body);
+
+  const submitBtn=mk('button','btn primary mt-16');
+  submitBtn.innerHTML='Submit Request';
+  submitBtn.style.marginTop='16px';
+  submitBtn.onclick=()=>submitReq(body);
+  body.appendChild(submitBtn);
+  const cancelBtn=mk('button','btn ghost');
+  cancelBtn.innerHTML='Cancel'; cancelBtn.style.marginTop='8px';
+  cancelBtn.onclick=closeSheet;
+  body.appendChild(cancelBtn);
+
+  openSheet('New Request',body);
+};
+
+function renderReqFields(body){
+  const area=$('#reqFields',body); if(!area) return;
+  const t=_reqType;
+  let html=`
+    <div style="height:14px"></div>
+    <div><label class="form-label">Request Title</label><input class="form-input" id="rfTitle" placeholder="Short description"/></div>
+    <div class="form-row">
+      <div><label class="form-label">Amount (USD)</label><input class="form-input" id="rfCost" type="number" min="0" placeholder="0"/></div>
+      <div><label class="form-label">Fund</label>
+        <select class="form-input" id="rfFund"><option value="operational">Operational</option><option value="restricted">Restricted</option></select>
+      </div>
+    </div>`;
+  if(t==='equipment') html+=`
+    <div><label class="form-label">Items Needed</label><textarea class="form-input" id="rfItems" placeholder="List each item and quantity"></textarea></div>
+    <div><label class="form-label">Vendor</label><input class="form-input" id="rfVendor" placeholder="e.g., BSN Sports, Amazon"/></div>
+    <div><label class="form-label">Vendor Link or Quote #</label><input class="form-input" id="rfUrl" placeholder="https://..."/></div>
+    <div><label class="form-label">Delivery Address</label><input class="form-input" id="rfDel" value="TCU Rec Center (Attn: Club Sports)"/></div>
+    <div class="form-hint">Purchases over $500 require an attached invoice or formal quote.</div>`;
+  if(t==='tourney') html+=`
+    <div><label class="form-label">Tournament Name</label><input class="form-input" id="rfTName" placeholder="e.g., Texas State 7s"/></div>
+    <div class="form-row">
+      <div><label class="form-label">Date</label><input class="form-input" id="rfTDate" type="date"/></div>
+      <div><label class="form-label"># of Players</label><input class="form-input" id="rfTPlayers" type="number" placeholder="15"/></div>
+    </div>
+    <div><label class="form-label">Organizing Body</label><input class="form-input" id="rfTOrg" placeholder="e.g., Texas Rugby Union"/></div>`;
+  if(t==='hotel') html+=`
+    <div><label class="form-label">Destination</label><input class="form-input" id="rfDest" placeholder="City, State"/></div>
+    <div class="form-row">
+      <div><label class="form-label">Check-In</label><input class="form-input" id="rfCI" type="date"/></div>
+      <div><label class="form-label">Check-Out</label><input class="form-input" id="rfCO" type="date"/></div>
+    </div>
+    <div><label class="form-label">Travelers</label><input class="form-input" id="rfTrav" placeholder="e.g., 14 players + 2 coaches"/></div>
+    <div><label class="form-label">Hotel Preference</label><input class="form-input" id="rfHotel" placeholder="e.g., Marriott near venue, or flexible"/></div>
+    <div><label class="form-label">Emergency Contact</label><input class="form-input" id="rfEmerg" placeholder="Name and phone"/></div>
+    <div class="form-hint">Submit at least 21 days before departure.</div>`;
+  if(t==='coach') html+=`
+    <div><label class="form-label">Coach / Instructor Name</label><input class="form-input" id="rfCName" placeholder="Full name"/></div>
+    <div class="form-row">
+      <div><label class="form-label">Period</label><input class="form-input" id="rfCPer" placeholder="Spring 2026"/></div>
+      <div><label class="form-label">Payment Method</label>
+        <select class="form-input" id="rfCPay"><option>Check to Finance Office</option><option>Direct Deposit</option></select>
+      </div>
+    </div>
+    <div class="form-hint">A signed coach agreement must be on file before payment can be processed.</div>`;
+  if(t==='officials') html+=`
+    <div class="form-row">
+      <div><label class="form-label"># of Games</label><input class="form-input" id="rfOG" type="number" placeholder="4"/></div>
+      <div><label class="form-label">Fee / Game</label><input class="form-input" id="rfOF" type="number" placeholder="85"/></div>
+    </div>
+    <div><label class="form-label">Assigning Organization</label><input class="form-input" id="rfOOrg" placeholder="e.g., North Texas Officials"/></div>`;
+  if(t==='medical') html+=`
+    <div><label class="form-label">Supplies Needed</label><textarea class="form-input" id="rfMed" placeholder="e.g., AED battery, first aid restock"></textarea></div>
+    <div><label class="form-label">Vendor</label><input class="form-input" id="rfMVen" placeholder="e.g., Bound Tree Medical"/></div>`;
+  if(t==='other') html+=`
+    <div><label class="form-label">Description</label><textarea class="form-input" id="rfOther" placeholder="Describe what you need and why"></textarea></div>`;
+  html+=`<div><label class="form-label">Additional Notes</label><textarea class="form-input" id="rfNotes" placeholder="Anything else staff should know…"></textarea></div>`;
+  html+=`<div><label class="form-label">Attachments</label><div id="rfUploadZone"></div><div id="rfFileList"></div></div>`;
+  area.innerHTML=html;
+
+  // Mount upload zone
+  const uploadContainer=$('#rfUploadZone',area);
+  if(uploadContainer){
+    const zone=createUploadZone({
+      label:'Attach invoice, quote, or supporting document',
+      hint:'PDF, JPG, PNG, DOC up to 10 MB',
+      onFile:f=>{
+        if(!S._pendingAttachments) S._pendingAttachments=[];
+        S._pendingAttachments.push({name:f.name,size:f.size,type:f.type,url:URL.createObjectURL(f)});
+        const list=$('#rfFileList');
+        if(list){
+          list.appendChild(createFileChip(f,()=>{
+            S._pendingAttachments=S._pendingAttachments.filter(a=>a.name!==f.name);
+          }));
+        }
+        toast(f.name+' attached ✓');
+      }
+    });
+    uploadContainer.appendChild(zone);
+  }
+}
+
+function gv(id){ const el=$(('#'+id)); return el?el.value:''; }
+
+function submitReq(root){
+  const title=gv('rfTitle');
+  if(!title){toast('Enter a request title');return;}
+  const r={
+    id:'REQ-'+uid(), type:_reqType, club:S.club,
+    by:'Colby Reynolds', email:'c.reynolds@tcu.edu',
+    createdAt:new Date().toISOString(), status:'Submitted',
+    fund:gv('rfFund')||'operational',
+    title, cost:Number(gv('rfCost')||0),
+    fields:{}, staffNote:''
+  };
+  if(_reqType==='equipment'){r.fields={items:gv('rfItems'),vendor:gv('rfVendor'),url:gv('rfUrl'),delivery:gv('rfDel')};}
+  if(_reqType==='tourney'){r.fields={tournamentName:gv('rfTName'),date:gv('rfTDate'),numPlayers:gv('rfTPlayers'),organizer:gv('rfTOrg')};}
+  if(_reqType==='hotel'){r.fields={destination:gv('rfDest'),checkIn:gv('rfCI'),checkOut:gv('rfCO'),travelers:gv('rfTrav'),hotelPref:gv('rfHotel'),emergency:gv('rfEmerg')};}
+  if(_reqType==='coach'){r.fields={coachName:gv('rfCName'),period:gv('rfCPer'),payMethod:gv('rfCPay')};}
+  if(_reqType==='officials'){r.fields={numGames:gv('rfOG'),perGame:gv('rfOF'),assigner:gv('rfOOrg')};}
+  if(_reqType==='medical'){r.fields={supplies:gv('rfMed'),vendor:gv('rfMVen')};}
+  if(_reqType==='other'){r.fields={description:gv('rfOther')};}
+  r.fields.notes=gv('rfNotes');
+  r.attachments=S._pendingAttachments||[];
+  S._pendingAttachments=[];
+  S.requests.unshift(r);
+  toast('Request submitted ✓');
+  closeSheet(); setTab('requests');
+}
+
+/* ── REQUEST DETAIL ── */
+function showReqDetail(id){
+  const r=S.requests.find(x=>x.id===id); if(!r) return;
+  const t=REQ_TYPES.find(x=>x.key===r.type)||{icon:'📋',label:r.type};
+  const isStaff=S.role==='staff';
+  const statusColor={Approved:'green','Needs Info':'amber',Denied:'red',Submitted:'purple','In Review':'purple'}[r.status]||'gray';
+
+  const body=mk('div');
+
+  // Hero
+  const hero=mk('div','detail-hero');
+  hero.innerHTML=`
+    <div class="dh-type">${t.icon} ${t.label}</div>
+    <div class="dh-title">${esc(r.title)}</div>
+    <div class="dh-meta">${esc(r.by)} · ${esc(r.club)} · ${dateStr(r.createdAt)}</div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <span class="badge ${statusColor}">${esc(r.status)}</span>
+      <span class="badge ${r.fund==='restricted'?'purple':'green'}">${r.fund}</span>
+      <span class="badge gray" style="font-weight:800">${money(r.cost)}</span>
+    </div>`;
+  body.appendChild(hero);
+
+  // Staff note
+  if(r.staffNote){
+    const sn=mk('div','info-box warn');
+    sn.innerHTML=`<div class="ib-label">⚠️ Staff Note</div><div class="ib-text">${esc(r.staffNote)}</div>`;
+    body.appendChild(sn);
+  }
+
+  // Deadline check
+  if(r.type==='hotel'&&r.fields.checkIn){
+    const days=daysUntil(r.fields.checkIn);
+    const ok=days>=21,late=days<0;
+    const box=mk('div',`info-box ${late?'danger':ok?'success':'warn'}`);
+    box.innerHTML=`<div class="ib-label">${late?'⛔ Past Date':ok?'✓ Lead Time OK':'⚠️ Lead Time Risk'}</div><div class="ib-text">${late?'Check-in date is in the past.':ok?`${days} days until check-in — meets the 21-day guideline.`:`Only ${days} day(s) until check-in — inside the 21-day recommended window.`}</div>`;
+    body.appendChild(box);
+  }
+
+  // Field details
+  const fieldLabels={items:'Items',vendor:'Vendor',url:'Vendor Link',delivery:'Delivery',coachName:'Coach',period:'Period',payMethod:'Payment',tournamentName:'Tournament',date:'Date',numPlayers:'Players',organizer:'Organizer',destination:'Destination',checkIn:'Check-In',checkOut:'Check-Out',travelers:'Travelers',hotelPref:'Hotel Pref.',emergency:'Emergency',numGames:'# Games',perGame:'Per Game',assigner:'Assigning Org',supplies:'Supplies',description:'Description',notes:'Notes'};
+  const dl=mk('div','card');
+  dl.style.marginBottom='12px';
+  Object.entries(r.fields).forEach(([k,v])=>{
+    if(!v||v==='') return;
+    const row=mk('div','detail-row');
+    row.innerHTML=`<div class="detail-key">${esc(fieldLabels[k]||k)}</div><div class="detail-val">${esc(String(v))}</div>`;
+    dl.appendChild(row);
+  });
+  body.appendChild(dl);
+
+  // Attachments
+  if(r.attachments&&r.attachments.length){
+    const attHdr=mk('div','staff-section-hdr');attHdr.style.marginTop='4px';
+    attHdr.innerHTML='<h3>Attachments ('+r.attachments.length+')</h3>';
+    body.appendChild(attHdr);
+    r.attachments.forEach(a=>{
+      body.appendChild(createFileChip(a,null));
+    });
+    const spacer=mk('div');spacer.style.height='12px';body.appendChild(spacer);
+  }
+
+  // Upload more attachments button
+  const uploadMore=createInlineUploadBtn('Attach File','.pdf,.jpg,.png,.doc,.docx',f=>{
+    if(!r.attachments) r.attachments=[];
+    r.attachments.push({name:f.name,size:f.size,type:f.type,url:URL.createObjectURL(f)});
+    toast(f.name+' attached ✓');
+    closeSheet(); showReqDetail(r.id);
+  });
+  uploadMore.style.marginBottom='14px';
+  body.appendChild(uploadMore);
+
+  // Actions
+  if(isStaff&&['Submitted','In Review','Needs Info'].includes(r.status)){
+    const ag=mk('div');
+    ag.innerHTML=`
+      <button class="btn success" onclick="showApproveConfirm('${r.id}')">✓ Approve</button>
+      <div style="height:8px"></div>
+      <div class="btn-group">
+        <button class="btn ghost" onclick="needInfoReq('${r.id}')">Need More Info</button>
+        <button class="btn danger" onclick="denyReq('${r.id}')">✕ Deny</button>
+      </div>
+      <div style="height:8px"></div>
+      <button class="btn ghost" onclick="closeSheet()">Close</button>`;
+    body.appendChild(ag);
+  } else {
+    const cb=mk('button','btn ghost');
+    cb.innerHTML='Close'; cb.onclick=closeSheet;
+    body.appendChild(cb);
+  }
+
+  openSheet(`${t.icon} ${r.title}`,body);
+}
+
+window.approveReq=function(id){ showApproveConfirm(id); };
+window.needInfoReq=function(id){
+  const r=S.requests.find(x=>x.id===id); if(!r) return;
+  r.status='Needs Info'; r.staffNote='More information needed. Please update and resubmit.';
+  pushNotif({icon:'⚠️',title:'More Info Needed',sub:`${r.title} was sent back — check the staff note.`,club:r.club,type:'warn',reqId:r.id});
+  toast('Sent back for info'); closeSheet(); render();
+};
+window.denyReq=function(id){
+  const r=S.requests.find(x=>x.id===id); if(!r) return;
+  r.status='Denied'; r.staffNote='Request denied. Contact clubsports@tcu.edu for details.';
+  pushNotif({icon:'❌',title:'Request Denied',sub:`${r.title} was denied. Contact staff for details.`,club:r.club,type:'deny',reqId:r.id});
+  toast('Request denied'); closeSheet(); render();
+};
+
+/* ── SHEET HELPERS ── */
+function openSheet(title,node){
+  $('#sheetTitle').textContent=title;
+  const b=$('#sheetBody'); b.innerHTML=''; b.appendChild(node);
+  $('#sheetBg').classList.add('open');
+}
+window.closeSheet=function(){ $('#sheetBg').classList.remove('open'); };
+
+let _toastT;
+function toast(msg){
+  const t=mk('div','toast'); t.textContent=msg;
+  $('#toastWrap').appendChild(t);
+  clearTimeout(_toastT);
+  _toastT=setTimeout(()=>t.remove(),2600);
+}
+
+function mk(tag,cls){
+  const el=document.createElement(tag==='div'?'div':tag);
+  if(cls) el.className=cls; return el;
+}
+
+
+/* ── DOCUMENTS PAGE ── */
+function pgDocuments(){
+  const el=mk('div');
+  const isStaff=S.role==='staff';
+
+  const hdr=mk('div');
+  hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:16px';
+  hdr.innerHTML=`<div><div style="font-size:20px;font-weight:800">Documents</div><div style="font-size:13px;color:var(--ink3);margin-top:2px">${esc(S.club)} · Shared club files</div></div>`;
+  el.appendChild(hdr);
+
+  // Upload zone
+  const zone=createUploadZone({
+    label:'Upload a club document',
+    hint:'Bylaws, rosters, receipts, agreements — PDF, DOC, JPG, PNG up to 10 MB',
+    onFile:f=>{
+      S.documents.push({
+        id:'D'+uid(),
+        name:f.name,
+        size:f.size,
+        type:f.type,
+        url:URL.createObjectURL(f),
+        club:S.club,
+        uploadedBy:isStaff?'Jordan Lee':'Colby Reynolds',
+        uploadedAt:new Date().toISOString()
+      });
+      toast(f.name+' uploaded ✓');
+      render();
+    }
+  });
+  el.appendChild(zone);
+
+  // Document list
+  const clubDocs=S.documents.filter(d=>d.club===S.club);
+
+  if(!clubDocs.length){
+    const emp=mk('div','empty');
+    emp.style.marginTop='12px';
+    emp.innerHTML='<div class="e-ico">📁</div><div class="e-txt">No documents yet</div><div class="e-sub">Upload bylaws, receipts, agreements, or any club files</div>';
+    el.appendChild(emp);
+    return el;
+  }
+
+  const listHdr=mk('div','sec-hdr');listHdr.style.marginTop='16px';
+  listHdr.innerHTML=`<h3>Uploaded Files (${clubDocs.length})</h3>`;
+  el.appendChild(listHdr);
+
+  const card=mk('div','card');
+  clubDocs.sort((a,b)=>new Date(b.uploadedAt)-new Date(a.uploadedAt)).forEach(d=>{
+    const icons={'application/pdf':'📄','image/jpeg':'🖼️','image/png':'🖼️','image/jpg':'🖼️','application/msword':'📝','application/vnd.openxmlformats-officedocument.wordprocessingml.document':'📝'};
+    const icon=icons[d.type]||'📎';
+    const item=mk('div','form-submission-item');
+    item.innerHTML=`
+      <div class="fs-icon">${icon}</div>
+      <div class="fs-body">
+        <div class="fs-title">${esc(d.name)}</div>
+        <div class="fs-sub">${esc(d.uploadedBy)} · ${dateStr(d.uploadedAt)} · ${fmtFileSize(d.size)}</div>
+      </div>
+      <div class="fs-status" style="display:flex;gap:6px"></div>`;
+    const actions=item.querySelector('.fs-status');
+
+    // View/download button
+    const viewBtn=mk('button','ami-btn'); viewBtn.innerHTML='👁️'; viewBtn.title='View';
+    viewBtn.onclick=e=>{
+      e.stopPropagation();
+      window.open(d.url,'_blank');
+    };
+    actions.appendChild(viewBtn);
+
+    // Delete button
+    const delBtn=mk('button','ami-btn del'); delBtn.innerHTML='🗑️'; delBtn.title='Delete';
+    delBtn.onclick=e=>{
+      e.stopPropagation();
+      S.documents=S.documents.filter(x=>x.id!==d.id);
+      toast('Document deleted');
+      render();
+    };
+    actions.appendChild(delBtn);
+
+    card.appendChild(item);
+  });
+  el.appendChild(card);
+  return el;
+}
+
+/* ── STANDALONE Q&A PAGE ── */
+function pgQAOnly(){
+  const el=mk('div');
+  el.innerHTML='<div style="font-size:20px;font-weight:800;margin-bottom:16px">Policy Help</div>';
+  const qcard=mk('div','card');
+  qcard.style.overflow='hidden';
+  const quickWrap=mk('div');
+  quickWrap.style.cssText='display:flex;flex-wrap:wrap;gap:6px;padding:12px 14px;border-bottom:1px solid var(--border)';
+  ['travel deadlines','purchase over $500','roster eligibility','operational vs restricted','coach payment','official fees'].forEach(q=>{
+    const b=mk('button');
+    b.style.cssText='padding:6px 14px;border-radius:999px;border:1.5px solid var(--p-mid);background:var(--p-soft);color:var(--p);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer';
+    b.textContent=q; b.onclick=()=>askQ(q);
+    quickWrap.appendChild(b);
+  });
+  qcard.appendChild(quickWrap);
+  const chatWrap=mk('div','chat-wrap');
+  chatWrap.style.cssText='padding:16px 14px;min-height:200px;max-height:500px;overflow-y:auto';
+  chatWrap.id='chatBox';
+  qcard.appendChild(chatWrap);
+  const inputRow=mk('div','qa-input-row');
+  inputRow.innerHTML='<input id="qaIn" placeholder="Ask a policy question…"/><button class="qa-send" onclick="sendQ()">↑</button>';
+  qcard.appendChild(inputRow);
+  el.appendChild(qcard);
+  setTimeout(()=>{
+    drawChat();
+    $('#qaIn')?.addEventListener('keydown',e=>{if(e.key==='Enter')sendQ()});
+  },0);
+  return el;
+}
+
+/* ── FILE UPLOAD UTILITIES ── */
+function fmtFileSize(bytes){
+  if(bytes<1024) return bytes+' B';
+  if(bytes<1048576) return (bytes/1024).toFixed(1)+' KB';
+  return (bytes/1048576).toFixed(1)+' MB';
+}
+
+function createUploadZone(opts){
+  // opts: {id, accept, label, hint, onFile}
+  const zone=mk('div','upload-zone');
+  zone.innerHTML=`<div class="uz-icon">📎</div><div class="uz-text">${opts.label||'Click or drag to upload'}</div><div class="uz-hint">${opts.hint||'PDF, JPG, PNG up to 10 MB'}</div>`;
+  const inp=document.createElement('input');
+  inp.type='file'; inp.accept=opts.accept||'.pdf,.jpg,.jpeg,.png,.doc,.docx';
+  inp.onchange=e=>{
+    const f=e.target.files[0]; if(!f) return;
+    if(opts.onFile) opts.onFile(f);
+  };
+  zone.appendChild(inp);
+  zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('dragover');});
+  zone.addEventListener('dragleave',()=>zone.classList.remove('dragover'));
+  zone.addEventListener('drop',e=>{
+    e.preventDefault();zone.classList.remove('dragover');
+    const f=e.dataTransfer.files[0]; if(!f) return;
+    if(opts.onFile) opts.onFile(f);
+  });
+  return zone;
+}
+
+function createFileChip(file, onRemove){
+  const chip=mk('div','file-chip');
+  const icons={'application/pdf':'📄','image/jpeg':'🖼️','image/png':'🖼️','image/jpg':'🖼️'};
+  const icon=icons[file.type]||'📎';
+  chip.innerHTML=`<span class="fc-icon">${icon}</span><span class="fc-name">${esc(file.name)}</span><span class="fc-size">${fmtFileSize(file.size)}</span>`;
+  const rem=mk('button','fc-remove'); rem.innerHTML='✕';
+  rem.onclick=e=>{e.stopPropagation();if(onRemove) onRemove();chip.remove();};
+  chip.appendChild(rem);
+  return chip;
+}
+
+function createInlineUploadBtn(label, accept, onFile){
+  const btn=mk('div','upload-btn-inline');
+  btn.innerHTML=`📎 ${label}`;
+  const inp=document.createElement('input');
+  inp.type='file'; inp.accept=accept||'.pdf,.jpg,.jpeg,.png';
+  inp.onchange=e=>{const f=e.target.files[0]; if(f&&onFile) onFile(f);};
+  btn.appendChild(inp);
+  return btn;
+}
+
+/* ── SEARCH ── */
+window.openSearch=function(){
+  const ov=$('#searchOverlay');
+  ov.classList.add('open');
+  const inp=$('#searchInput');
+  inp.value='';
+  inp.focus();
+  runSearch('');
+};
+window.closeSearch=function(){
+  $('#searchOverlay').classList.remove('open');
+};
+$('#searchOverlay').addEventListener('click',e=>{
+  if(e.target===$('#searchOverlay')) closeSearch();
+});
+
+function runSearch(q){
+  const res=$('#searchResults');
+  q=q.toLowerCase().trim();
+  if(!q){
+    res.innerHTML='<div class="search-empty">Start typing to search…</div>';
+    return;
+  }
+  const results=[];
+
+  // Search clubs
+  Object.keys(S.clubs).forEach(name=>{
+    if(name.toLowerCase().includes(q)){
+      results.push({icon:'🏟️',title:name,sub:'Club',tag:'Club',tagColor:'var(--p-soft)',tagText:'var(--p)',action:()=>{S.club=name;$('#topClubName').textContent=name;if(S.role==='staff'){S.tab='clubview';S.staffTab='overview';}else{S.tab='budget';}closeSearch();render();}});
+    }
+  });
+
+  // Search players
+  Object.entries(S.roster).forEach(([club,players])=>{
+    players.forEach(p=>{
+      if(p.name.toLowerCase().includes(q)||p.pos.toLowerCase().includes(q)||p.email.toLowerCase().includes(q)){
+        results.push({icon:'👤',title:p.name,sub:`${p.year} · ${p.pos} · ${club}`,tag:p.status,tagColor:p.status==='Eligible'?'var(--green-bg)':p.status==='Pending'?'var(--amber-bg)':'var(--red-bg)',tagText:p.status==='Eligible'?'var(--green)':p.status==='Pending'?'var(--amber)':'var(--red)',action:()=>{closeSearch();showPlayerSheet(p);}});
+      }
+    });
+  });
+
+  // Search requests
+  S.requests.forEach(r=>{
+    if(r.title.toLowerCase().includes(q)||r.by.toLowerCase().includes(q)||r.club.toLowerCase().includes(q)||r.type.toLowerCase().includes(q)){
+      const t=REQ_TYPES.find(x=>x.key===r.type)||{icon:'📋'};
+      results.push({icon:t.icon,title:r.title,sub:`${r.by} · ${r.club} · ${money(r.cost)}`,tag:r.status,tagColor:{Approved:'var(--green-bg)','Needs Info':'var(--amber-bg)',Denied:'var(--red-bg)',Submitted:'var(--p-soft)','In Review':'var(--p-soft)'}[r.status]||'var(--bg)',tagText:{Approved:'var(--green)','Needs Info':'var(--amber)',Denied:'var(--red)',Submitted:'var(--p)','In Review':'var(--p)'}[r.status]||'var(--ink3)',action:()=>{closeSearch();showReqDetail(r.id);}});
+    }
+  });
+
+  // Search announcements
+  S.announcements.forEach(a=>{
+    if(a.title.toLowerCase().includes(q)||a.body.toLowerCase().includes(q)){
+      results.push({icon:'📢',title:a.title,sub:a.by,tag:'Announcement',tagColor:'var(--amber-bg)',tagText:'var(--amber)',action:()=>{closeSearch();if(S.role==='staff')setTab('announcements');else setTab('home');}});
+    }
+  });
+
+  if(!results.length){
+    res.innerHTML=`<div class="search-empty">No results for "${esc(q)}"</div>`;
+    return;
+  }
+  res.innerHTML='';
+  results.slice(0,10).forEach(r=>{
+    const item=mk('div','search-result-item');
+    item.innerHTML=`<div class="sr-icon">${r.icon}</div><div class="sr-body"><div class="sr-title">${esc(r.title)}</div><div class="sr-sub">${esc(r.sub)}</div></div><span class="sr-tag" style="background:${r.tagColor};color:${r.tagText}">${esc(r.tag)}</span>`;
+    item.onclick=r.action;
+    res.appendChild(item);
+  });
+}
+
+$('#searchInput').addEventListener('input',e=>runSearch(e.target.value));
+$('#searchInput').addEventListener('keydown',e=>{
+  if(e.key==='Escape') closeSearch();
+  if(e.key==='Enter'){
+    const first=$('.search-result-item');
+    if(first) first.click();
+  }
+});
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openSearch();}
+});
+
+/* ── SETTINGS PAGE ── */
+function pgSettings(){
+  const el=mk('div');
+  const isStaff=S.role==='staff';
+  const name=isStaff?'Jordan Lee':'Colby Reynolds';
+  const email=isStaff?'j.lee@tcu.edu':'c.reynolds@tcu.edu';
+  const role=isStaff?'Rec Center Staff':'Club President';
+
+  el.innerHTML=`<div style="font-size:20px;font-weight:800;margin-bottom:20px">Settings</div>`;
+
+  // Profile card
+  const profileCard=mk('div','card');
+  profileCard.style.padding='24px 16px';
+
+  const avatarWrap=mk('div','settings-avatar-wrap');
+  const photoData=S.profilePhotos[S.role];
+  if(photoData){
+    avatarWrap.innerHTML=`<img class="avatar-img" src="${photoData}"/>`;
+  } else {
+    avatarWrap.innerHTML=`<div class="settings-avatar">${initials(name)}</div>`;
+  }
+  const photoOverlay=mk('div','photo-overlay');
+  photoOverlay.innerHTML='<span>📷<br>Change</span>';
+  avatarWrap.appendChild(photoOverlay);
+  const photoInput=document.createElement('input');
+  photoInput.type='file'; photoInput.accept='image/*';
+  photoInput.onchange=e=>{
+    const f=e.target.files[0]; if(!f) return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      S.profilePhotos[S.role]=ev.target.result;
+      toast('Profile photo updated ✓');
+      render();
+    };
+    reader.readAsDataURL(f);
+  };
+  avatarWrap.appendChild(photoInput);
+  profileCard.appendChild(avatarWrap);
+
+  const nameDiv=mk('div','settings-name'); nameDiv.textContent=name;
+  const emailDiv=mk('div','settings-email'); emailDiv.textContent=email+' · '+role;
+  profileCard.appendChild(nameDiv);
+  profileCard.appendChild(emailDiv);
+  el.appendChild(profileCard);
+
+  // Notification preferences
+  const notifGroup=mk('div','settings-group');
+  notifGroup.innerHTML=`<div class="settings-group-label">Notifications</div>`;
+  const notifSettings=[
+    {icon:'📧',label:'Email Notifications',key:'emailNotif',default:true},
+    {icon:'🔔',label:'Push Notifications',key:'pushNotif',default:true},
+    {icon:'✅',label:'Approval Alerts',key:'approvalNotif',default:true},
+    {icon:'💰',label:'Budget Alerts',key:'budgetNotif',default:true},
+  ];
+  notifSettings.forEach(s=>{
+    if(!S.settings) S.settings={};
+    if(S.settings[s.key]===undefined) S.settings[s.key]=s.default;
+    const row=mk('div','settings-row');
+    row.innerHTML=`<div class="sr-left"><span class="sr-ico">${s.icon}</span><span class="sr-lbl">${s.label}</span></div>`;
+    const toggle=mk('button','toggle'+(S.settings[s.key]?' on':''));
+    toggle.onclick=()=>{S.settings[s.key]=!S.settings[s.key];toggle.classList.toggle('on');toast(s.label+' '+(S.settings[s.key]?'enabled':'disabled'));};
+    row.appendChild(toggle);
+    notifGroup.appendChild(row);
+  });
+  el.appendChild(notifGroup);
+
+  // Account
+  const acctGroup=mk('div','settings-group');
+  acctGroup.innerHTML=`<div class="settings-group-label">Account</div>`;
+  [
+    {icon:'🏫',label:'Organization',val:'TCU Club Sports'},
+    {icon:'📅',label:'Fiscal Year',val:'FY 2025–26'},
+    {icon:'🔑',label:'Role',val:role},
+  ].forEach(s=>{
+    const row=mk('div','settings-row');
+    row.innerHTML=`<div class="sr-left"><span class="sr-ico">${s.icon}</span><span class="sr-lbl">${s.label}</span></div><div class="sr-right">${esc(s.val)} ›</div>`;
+    acctGroup.appendChild(row);
+  });
+  el.appendChild(acctGroup);
+
+  // App info
+  const appGroup=mk('div','settings-group');
+  appGroup.innerHTML=`<div class="settings-group-label">App</div>`;
+  [
+    {icon:'📱',label:'Version',val:'v9.0'},
+    {icon:'🐸',label:'FrogFlow',val:'TCU Rec Sports'},
+  ].forEach(s=>{
+    const row=mk('div','settings-row');
+    row.innerHTML=`<div class="sr-left"><span class="sr-ico">${s.icon}</span><span class="sr-lbl">${s.label}</span></div><div class="sr-right">${esc(s.val)}</div>`;
+    appGroup.appendChild(row);
+  });
+  el.appendChild(appGroup);
+
+  return el;
+}
+
+/* ── ANNOUNCEMENTS PAGE (Staff) ── */
+function pgAnnouncements(){
+  const el=mk('div');
+  const hdr=mk('div');
+  hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:16px';
+  hdr.innerHTML='<div><div style="font-size:20px;font-weight:800">Announcements</div><div style="font-size:13px;color:var(--ink3);margin-top:2px">Visible to all club presidents</div></div>';
+  const nb=mk('button','btn primary sm');
+  nb.innerHTML='+ New Announcement'; nb.onclick=showNewAnnouncement;
+  hdr.appendChild(nb);
+  el.appendChild(hdr);
+
+  if(!S.announcements.length){
+    const emp=mk('div','empty');
+    emp.innerHTML='<div class="e-ico">📢</div><div class="e-txt">No announcements</div><div class="e-sub">Create one to notify all club presidents</div>';
+    el.appendChild(emp);
+    return el;
+  }
+
+  const card=mk('div','card');
+  S.announcements.forEach(a=>{
+    const item=mk('div','announce-manage-item');
+    item.innerHTML=`
+      <div style="font-size:22px;flex-shrink:0;padding-top:2px">📢</div>
+      <div class="ami-body">
+        <div class="ami-title">${esc(a.title)}</div>
+        <div class="ami-preview">${esc(a.body)}</div>
+        <div class="ami-meta">${esc(a.by)} · ${esc(a.date)}</div>
+      </div>
+      <div class="ami-actions"></div>`;
+    const actions=item.querySelector('.ami-actions');
+    const editBtn=mk('button','ami-btn'); editBtn.innerHTML='✏️'; editBtn.title='Edit';
+    editBtn.onclick=e=>{e.stopPropagation();showEditAnnouncement(a.id);};
+    const delBtn=mk('button','ami-btn del'); delBtn.innerHTML='🗑️'; delBtn.title='Delete';
+    delBtn.onclick=e=>{e.stopPropagation();deleteAnnouncement(a.id);};
+    actions.appendChild(editBtn); actions.appendChild(delBtn);
+    card.appendChild(item);
+  });
+  el.appendChild(card);
+  return el;
+}
+
+window.showNewAnnouncement=function(){
+  const body=mk('div');
+  body.innerHTML=`
+    <div><label class="form-label">Title</label><input class="form-input" id="annTitle" placeholder="e.g., Roster Verification Due April 1"/></div>
+    <div><label class="form-label">Body</label><textarea class="form-input" id="annBody" placeholder="Write the full announcement…" style="min-height:120px"></textarea></div>
+    <div class="mt-16">
+      <button class="btn primary" onclick="doCreateAnnouncement()">Publish Announcement</button>
+      <div style="height:8px"></div>
+      <button class="btn ghost" onclick="closeSheet()">Cancel</button>
+    </div>`;
+  openSheet('New Announcement',body);
+};
+window.doCreateAnnouncement=function(){
+  const title=$('#annTitle').value.trim();
+  const body=$('#annBody').value.trim();
+  if(!title){toast('Enter a title');return;}
+  S.announcements.unshift({
+    id:'a'+uid(),title,body:body||'',
+    date:new Date().toISOString().slice(0,10),
+    by:'Jordan Lee · Rec Staff'
+  });
+  pushNotif({icon:'📢',title:'Announcement Published',sub:title,club:'All Clubs',type:'info'});
+  toast('Announcement published ✓');
+  closeSheet(); render();
+};
+
+function showEditAnnouncement(id){
+  const a=S.announcements.find(x=>x.id===id);
+  if(!a) return;
+  const body=mk('div');
+  body.innerHTML=`
+    <div><label class="form-label">Title</label><input class="form-input" id="annTitle" value="${esc(a.title)}"/></div>
+    <div><label class="form-label">Body</label><textarea class="form-input" id="annBody" style="min-height:120px">${esc(a.body)}</textarea></div>
+    <div class="mt-16">
+      <button class="btn primary" onclick="doEditAnnouncement('${a.id}')">Save Changes</button>
+      <div style="height:8px"></div>
+      <button class="btn ghost" onclick="closeSheet()">Cancel</button>
+    </div>`;
+  openSheet('Edit Announcement',body);
+}
+window.doEditAnnouncement=function(id){
+  const a=S.announcements.find(x=>x.id===id);
+  if(!a) return;
+  const title=$('#annTitle').value.trim();
+  if(!title){toast('Enter a title');return;}
+  a.title=title;
+  a.body=$('#annBody').value.trim();
+  toast('Announcement updated ✓');
+  closeSheet(); render();
+};
+
+function deleteAnnouncement(id){
+  S.announcements=S.announcements.filter(a=>a.id!==id);
+  toast('Announcement deleted');
+  render();
+}
+
+/* ── EXPORT FUNCTIONS ── */
+function exportCSV(filename, headers, rows){
+  const csvContent=[headers.join(','),...rows.map(r=>r.map(c=>'"'+(String(c).replace(/"/g,'""'))+'"').join(','))].join('\n');
+  const blob=new Blob([csvContent],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=filename;a.click();
+  URL.revokeObjectURL(url);
+  toast('Exported '+filename+' ✓');
+}
+
+window.exportRoster=function(clubName){
+  const club=clubName||S.club;
+  const players=S.roster[club]||[];
+  if(!players.length){toast('No roster data to export');return;}
+  const headers=['Name','Year','Position','Email','Status','Waiver','Medical'];
+  const rows=players.map(p=>[p.name,p.year,p.pos,p.email,p.status,p.waiver?'Yes':'No',p.medical?'Yes':'No']);
+  exportCSV(club.replace(/\s+/g,'_')+'_Roster.csv',headers,rows);
+};
+
+window.exportRequests=function(clubName){
+  const club=clubName||S.club;
+  const reqs=S.requests.filter(r=>!clubName||r.club===club);
+  if(!reqs.length){toast('No requests to export');return;}
+  const headers=['ID','Type','Title','Club','Submitted By','Amount','Fund','Status','Date'];
+  const rows=reqs.map(r=>[r.id,r.type,r.title,r.club,r.by,r.cost,r.fund,r.status,dateStr(r.createdAt)]);
+  exportCSV((club||'All_Clubs').replace(/\s+/g,'_')+'_Requests.csv',headers,rows);
+};
+
+window.exportFinances=function(clubName){
+  const club=clubName||S.club;
+  const c=S.clubs[club];
+  if(!c||!c.ledger.length){toast('No transactions to export');return;}
+  const headers=['Date','Fund','Type','Amount','Memo'];
+  const rows=c.ledger.map(t=>[dateStr(t.ts),t.fund==='op'?'Operational':'Restricted',t.type,t.amt,t.memo]);
+  exportCSV(club.replace(/\s+/g,'_')+'_Transactions.csv',headers,rows);
+};
+
+window.setTab=setTab;
+window.showPostTxn=showPostTxn;
+
+/* ── INIT ── */
+$('#roleSelect').addEventListener('change',e=>{
+  S.role=e.target.value;
+  $('#roleDot').className='role-dot'+(S.role==='staff'?' staff':'');
+  if(S.role==='staff'){
+    S.tab='clubview';
+    S.staffTab='overview';
+  } else {
+    S.tab='home';
+  }
+  toast(`Viewing as ${S.role==='staff'?'Rec Staff':'Club President'}`);
+  render();
+});
+$('#sheetClose').addEventListener('click',closeSheet);
+$('#sheetBg').addEventListener('click',e=>{ if(e.target===$('#sheetBg')) closeSheet(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeSheet(); closeSearch(); } });
+// Close notif panel on outside click
+document.addEventListener('click',e=>{
+  const btn=$('#notifBtn'), panel=$('#notifPanel');
+  if(panel&&panel.classList.contains('open')&&!btn?.contains(e.target)&&!panel.contains(e.target)){
+    panel.classList.remove('open');
+  }
+});
+
+seed();
+seedNotifications();
+render();
+
+})();
+</script>
+</body>
+</html>
