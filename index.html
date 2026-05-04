@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>FrogFlow — TCU Club Sports Management</title>
+<meta name="description" content="A web app prototype designed to replace email and spreadsheets in TCU competitive sports club administration."/>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --p:#4d1979; --p2:#3a125e; --p3:#6b35a8; --p-soft:#f4edfb; --p-mist:#faf7fd;
+  --gold:#c8a430; --gold-2:#a8881e;
+  --ink:#0f0f14; --ink2:#3d3d52; --ink3:#73738c; --ink4:#a8a8be;
+  --surface:#ffffff; --bg:#f8f5fb; --border:rgba(15,15,20,.08); --border-2:rgba(15,15,20,.12);
+  --r:14px; --r2:10px; --r3:20px;
+  --display:'Fraunces',Georgia,serif;
+  --sans:'Figtree',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --ease:cubic-bezier(.25,.46,.45,.94);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);color:var(--ink);background:var(--bg);
+  -webkit-font-smoothing:antialiased;line-height:1.65;
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* ─── TOP BAR ──────────────────────────── */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:rgba(248,245,251,.85);backdrop-filter:blur(16px) saturate(1.4);
+  border-bottom:1px solid var(--border);
+}
+.topbar-inner{
+  max-width:1200px;margin:0 auto;padding:14px 28px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+}
+.logo{
+  display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;
+}
+.logo-frog{
+  width:32px;height:32px;border-radius:9px;
+  background:linear-gradient(135deg,var(--p),var(--p3));
+  display:grid;place-items:center;font-size:17px;
+  box-shadow:0 4px 12px rgba(77,25,121,.25);
+}
+.topbar-nav{display:flex;align-items:center;gap:24px}
+.topbar-nav a{font-size:14px;font-weight:500;color:var(--ink2);transition:.15s var(--ease)}
+.topbar-nav a:hover{color:var(--p)}
+.topbar-cta{
+  padding:9px 18px;border-radius:999px;background:var(--p);color:#fff;font-weight:600;
+  font-size:13px;transition:.18s var(--ease);
+  box-shadow:0 4px 14px rgba(77,25,121,.3);
+}
+.topbar-cta:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(77,25,121,.4)}
+@media(max-width:760px){
+  .topbar-nav a:not(.topbar-cta){display:none}
+}
+
+/* ─── HERO ──────────────────────────────── */
+.hero{
+  position:relative;
+  padding:80px 28px 100px;
+  overflow:hidden;
+  background:linear-gradient(180deg,var(--bg) 0%,#fff 100%);
+}
+.hero::before{
+  content:'';position:absolute;top:-200px;right:-200px;
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,164,48,.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero::after{
+  content:'';position:absolute;bottom:-150px;left:-100px;
+  width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(77,25,121,.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-inner{
+  max-width:1100px;margin:0 auto;position:relative;z-index:1;
+  display:grid;grid-template-columns:1.2fr 1fr;gap:60px;align-items:center;
+}
+@media(max-width:900px){
+  .hero{padding:60px 24px 80px}
+  .hero-inner{grid-template-columns:1fr;gap:40px}
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 14px;border-radius:999px;
+  background:var(--p-soft);color:var(--p);
+  font-size:12px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;
+  margin-bottom:24px;
+}
+.hero-tag::before{
+  content:'';width:7px;height:7px;border-radius:50%;background:var(--p);
+}
+.hero h1{
+  font-family:var(--display);
+  font-size:clamp(40px,6vw,68px);font-weight:600;
+  line-height:1.05;letter-spacing:-1.2px;margin-bottom:20px;
+  color:var(--ink);
+}
+.hero h1 .accent{
+  font-style:italic;color:var(--p);
+  position:relative;
+}
+.hero h1 .accent::after{
+  content:'';position:absolute;bottom:6px;left:0;right:0;height:8px;
+  background:var(--gold);opacity:.35;border-radius:2px;z-index:-1;
+}
+.hero-lede{
+  font-size:18px;color:var(--ink2);margin-bottom:32px;max-width:540px;
+  line-height:1.6;
+}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 26px;border-radius:999px;font-weight:600;font-size:15px;
+  transition:.18s var(--ease);cursor:pointer;border:none;font-family:var(--sans);
+}
+.btn.primary{
+  background:var(--p);color:#fff;
+  box-shadow:0 6px 20px rgba(77,25,121,.3);
+}
+.btn.primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(77,25,121,.42)}
+.btn.secondary{
+  background:#fff;color:var(--p);border:1.5px solid var(--border-2);
+}
+.btn.secondary:hover{border-color:var(--p);transform:translateY(-1px)}
+.btn .arrow{transition:.18s var(--ease)}
+.btn:hover .arrow{transform:translateX(3px)}
+
+/* ─── HERO MOCKUP ─────────────────────── */
+.hero-visual{
+  position:relative;
+  padding:30px;
+}
+.mockup-card{
+  background:#fff;border-radius:var(--r3);
+  box-shadow:0 30px 60px rgba(77,25,121,.18),0 8px 20px rgba(77,25,121,.08);
+  overflow:hidden;
+  transform:rotate(-2deg);
+  transition:.4s var(--ease);
+  border:1px solid var(--border);
+}
+.mockup-card:hover{transform:rotate(0deg) scale(1.02)}
+.mockup-header{
+  background:linear-gradient(135deg,var(--p2),var(--p));
+  color:#fff;padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.mockup-title{font-weight:800;font-size:14px;display:flex;align-items:center;gap:8px}
+.mockup-dots{display:flex;gap:5px}
+.mockup-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3)}
+.mockup-body{padding:20px 18px}
+.mock-stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px}
+.mock-stat{
+  background:var(--p-soft);border-radius:var(--r2);padding:10px 8px;text-align:center;
+}
+.mock-stat .v{font-size:20px;font-weight:900;color:var(--p)}
+.mock-stat .l{font-size:9px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+.mock-row{
+  display:flex;align-items:center;gap:10px;padding:10px 0;
+  border-bottom:1px solid var(--border);
+}
+.mock-row:last-child{border-bottom:none}
+.mock-icon{
+  width:32px;height:32px;border-radius:9px;flex-shrink:0;
+  display:grid;place-items:center;font-size:14px;
+}
+.mock-icon.green{background:#edfaf7;color:#0e7a6e}
+.mock-icon.purple{background:var(--p-soft);color:var(--p)}
+.mock-icon.amber{background:#fef9ee;color:#c47b0a}
+.mock-text{flex:1;min-width:0}
+.mock-text-1{font-size:12px;font-weight:700;color:var(--ink)}
+.mock-text-2{font-size:10px;color:var(--ink3);margin-top:1px}
+.mock-badge{
+  font-size:9px;font-weight:800;padding:3px 7px;border-radius:999px;
+}
+.mock-badge.green{background:#edfaf7;color:#0e7a6e}
+.mock-badge.amber{background:#fef9ee;color:#c47b0a}
+
+/* ─── SECTIONS ──────────────────────────── */
+section{padding:90px 28px;position:relative}
+.container{max-width:1100px;margin:0 auto}
+.section-tag{
+  display:inline-block;font-size:12px;font-weight:800;
+  color:var(--gold-2);text-transform:uppercase;letter-spacing:1.5px;
+  margin-bottom:14px;
+}
+.section-title{
+  font-family:var(--display);font-weight:600;
+  font-size:clamp(32px,4.5vw,48px);
+  line-height:1.1;letter-spacing:-.6px;
+  margin-bottom:18px;max-width:760px;
+}
+.section-title .accent{font-style:italic;color:var(--p)}
+.section-lede{
+  font-size:17px;color:var(--ink2);max-width:680px;line-height:1.65;
+  margin-bottom:50px;
+}
+
+/* ─── WHY SECTION ───────────────────────── */
+.why{background:#fff;border-top:1px solid var(--border)}
+.why-grid{
+  display:grid;grid-template-columns:1.2fr 1fr;gap:60px;align-items:start;
+}
+@media(max-width:900px){.why-grid{grid-template-columns:1fr;gap:32px}}
+.why-prose p{font-size:16px;color:var(--ink2);margin-bottom:20px;line-height:1.75}
+.why-prose p:last-child{margin-bottom:0}
+.why-prose strong{color:var(--ink);font-weight:700}
+.pull-quote{
+  background:linear-gradient(135deg,var(--p-mist),var(--p-soft));
+  border-radius:var(--r3);padding:32px 30px;
+  border-left:4px solid var(--gold);
+  position:sticky;top:100px;
+}
+.pull-quote-mark{
+  font-family:var(--display);font-size:64px;font-weight:700;
+  color:var(--p);line-height:.6;margin-bottom:8px;
+  font-style:italic;
+}
+.pull-quote-text{
+  font-family:var(--display);font-size:20px;font-weight:500;
+  font-style:italic;color:var(--ink);line-height:1.45;letter-spacing:-.2px;
+  margin-bottom:18px;
+}
+.pull-quote-attr{
+  font-size:13px;font-weight:700;color:var(--p);
+}
+.pull-quote-attr-sub{
+  font-size:12px;color:var(--ink3);margin-top:2px;
+}
+
+/* ─── DATA SECTION ──────────────────────── */
+.data{
+  background:linear-gradient(180deg,#fff 0%,var(--bg) 100%);
+}
+.data-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:start;
+}
+@media(max-width:760px){.data-grid{grid-template-columns:1fr}}
+.data-card{
+  background:#fff;border:1px solid var(--border);border-radius:var(--r3);
+  padding:32px 28px;
+  transition:.25s var(--ease);
+}
+.data-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 12px 32px rgba(77,25,121,.1);
+  border-color:rgba(77,25,121,.2);
+}
+.data-card-head{
+  display:flex;align-items:center;gap:14px;margin-bottom:18px;
+}
+.data-card-num{
+  font-family:var(--display);font-size:36px;font-weight:700;
+  color:var(--p);line-height:1;font-style:italic;
+}
+.data-card-label{
+  font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+  color:var(--ink3);
+}
+.data-card h3{
+  font-family:var(--display);font-size:22px;font-weight:600;
+  margin-bottom:10px;letter-spacing:-.3px;
+}
+.data-card p{font-size:15px;color:var(--ink2);line-height:1.65}
+.data-tables{
+  margin-top:50px;
+  background:#fff;border:1px solid var(--border);border-radius:var(--r3);
+  padding:32px;
+}
+.data-tables h4{
+  font-size:13px;font-weight:800;color:var(--ink3);
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:18px;
+}
+.tables-list{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:8px;
+}
+.table-chip{
+  font-family:var(--mono);font-size:12px;color:var(--ink2);
+  padding:8px 12px;background:var(--p-mist);border-radius:8px;
+  border:1px solid rgba(77,25,121,.08);
+}
+
+/* ─── FEATURES ──────────────────────────── */
+.features{background:#fff;border-top:1px solid var(--border)}
+.features-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+}
+@media(max-width:900px){.features-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.features-grid{grid-template-columns:1fr}}
+.feature{
+  padding:30px 24px;border-radius:var(--r3);
+  background:var(--p-mist);
+  border:1px solid var(--border);
+  transition:.25s var(--ease);
+  position:relative;overflow:hidden;
+}
+.feature:hover{
+  background:#fff;border-color:rgba(77,25,121,.15);
+  transform:translateY(-4px);
+  box-shadow:0 14px 36px rgba(77,25,121,.08);
+}
+.feature-icon{
+  width:48px;height:48px;border-radius:12px;
+  background:linear-gradient(135deg,var(--p),var(--p3));
+  display:grid;place-items:center;font-size:22px;color:#fff;margin-bottom:18px;
+  box-shadow:0 6px 16px rgba(77,25,121,.25);
+}
+.feature h3{
+  font-family:var(--display);font-size:20px;font-weight:600;
+  margin-bottom:8px;letter-spacing:-.2px;
+}
+.feature p{font-size:14px;color:var(--ink2);line-height:1.6}
+
+/* ─── ROADMAP ───────────────────────────── */
+.roadmap{
+  background:linear-gradient(180deg,var(--bg) 0%,#fff 100%);
+}
+.timeline{
+  position:relative;margin-top:50px;
+}
+.timeline::before{
+  content:'';position:absolute;left:23px;top:24px;bottom:24px;width:2px;
+  background:linear-gradient(180deg,var(--p) 0%,var(--gold) 100%);
+}
+.tl-item{
+  position:relative;padding-left:70px;padding-bottom:40px;
+}
+.tl-item:last-child{padding-bottom:0}
+.tl-num{
+  position:absolute;left:0;top:0;
+  width:48px;height:48px;border-radius:50%;
+  background:#fff;border:2px solid var(--p);
+  display:grid;place-items:center;
+  font-family:var(--display);font-weight:700;color:var(--p);font-size:18px;
+  z-index:1;box-shadow:0 4px 12px rgba(77,25,121,.15);
+}
+.tl-item.gold .tl-num{border-color:var(--gold);color:var(--gold-2)}
+.tl-content{padding-top:8px}
+.tl-meta{
+  font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+  color:var(--ink3);margin-bottom:6px;
+}
+.tl-content h3{
+  font-family:var(--display);font-size:24px;font-weight:600;
+  margin-bottom:10px;letter-spacing:-.3px;
+}
+.tl-content p{font-size:15px;color:var(--ink2);line-height:1.7;max-width:720px}
+
+/* ─── RESEARCH / CITATIONS ──────────────── */
+.research{background:#fff;border-top:1px solid var(--border)}
+.research-intro{
+  font-size:16px;color:var(--ink2);margin-bottom:36px;
+  max-width:780px;line-height:1.75;
+}
+.research-intro strong{color:var(--ink);font-weight:700}
+.citations{
+  display:grid;gap:18px;
+}
+.citation{
+  display:grid;grid-template-columns:auto 1fr;gap:20px;
+  padding:22px 24px;background:var(--p-mist);
+  border-radius:var(--r2);border-left:3px solid var(--p);
+}
+.citation-num{
+  font-family:var(--display);font-size:24px;font-weight:700;
+  color:var(--p);font-style:italic;line-height:1;
+}
+.citation-body p{
+  font-size:14px;color:var(--ink);line-height:1.6;margin-bottom:6px;
+}
+.citation-body p strong{font-weight:700}
+.citation-body em{color:var(--ink2);font-style:italic}
+.citation-link{
+  font-family:var(--mono);font-size:11px;color:var(--p);
+  word-break:break-all;
+}
+.citation-link:hover{text-decoration:underline}
+
+/* ─── CTA FOOTER ────────────────────────── */
+.cta-section{
+  background:linear-gradient(135deg,var(--p2) 0%,var(--p) 50%,var(--p3) 100%);
+  color:#fff;padding:90px 28px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.cta-section::before{
+  content:'';position:absolute;top:-200px;right:-200px;
+  width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,164,48,.2) 0%,transparent 70%);
+}
+.cta-section::after{
+  content:'';position:absolute;bottom:-200px;left:-200px;
+  width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.06) 0%,transparent 70%);
+}
+.cta-inner{position:relative;z-index:1;max-width:680px;margin:0 auto}
+.cta-section h2{
+  font-family:var(--display);font-size:clamp(32px,5vw,48px);
+  font-weight:600;line-height:1.1;letter-spacing:-.5px;margin-bottom:20px;
+}
+.cta-section h2 .accent{font-style:italic;color:#ffd76d}
+.cta-section p{
+  font-size:17px;color:rgba(255,255,255,.8);margin-bottom:32px;line-height:1.6;
+}
+.cta-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.cta-section .btn.primary{
+  background:var(--gold);color:var(--p2);
+  box-shadow:0 6px 20px rgba(200,164,48,.4);
+}
+.cta-section .btn.primary:hover{background:#d9b537;box-shadow:0 10px 28px rgba(200,164,48,.55)}
+.cta-section .btn.secondary{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.25)}
+.cta-section .btn.secondary:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.5)}
+
+/* ─── FOOTER ────────────────────────────── */
+footer{
+  background:#1a0a2e;color:rgba(255,255,255,.6);padding:40px 28px;
+  text-align:center;font-size:13px;
+}
+footer .footer-inner{max-width:1100px;margin:0 auto}
+footer strong{color:#fff;font-weight:600}
+footer a{color:var(--gold);}
+footer a:hover{text-decoration:underline}
+footer .footer-divider{
+  width:60px;height:2px;background:var(--gold);margin:14px auto;border-radius:999px;
+}
+</style>
+</head>
+<body>
+
+<!-- ─── TOPBAR ─── -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="#top" class="logo">
+      <div class="logo-frog">🐸</div>
+      <span>FrogFlow</span>
+    </a>
+    <nav class="topbar-nav">
+      <a href="#why">Why</a>
+      <a href="#features">Features</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#research">Research</a>
+      <a href="https://colbyreynoldstcu.github.io/FrogFlow/app" class="topbar-cta">Try the App →</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ─── HERO ─── -->
+<main id="top">
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag">A TCU Student Project</div>
+      <h1>Club sports, <span class="accent">finally organized.</span></h1>
+      <p class="hero-lede">FrogFlow replaces the email threads and shared spreadsheets that TCU competitive sports clubs currently rely on with a single, purpose-built management platform — built for both student officers and Rec Center staff.</p>
+      <div class="hero-cta">
+        <a href="https://colbyreynoldstcu.github.io/FrogFlow/app" class="btn primary">
+          Try the App <span class="arrow">→</span>
+        </a>
+        <a href="https://github.com/colbyreynoldstcu/FrogFlow" class="btn secondary">
+          View on GitHub
+        </a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="mockup-card">
+        <div class="mockup-header">
+          <div class="mockup-title">🐸 FrogFlow</div>
+          <div class="mockup-dots">
+            <div class="mockup-dot"></div>
+            <div class="mockup-dot"></div>
+            <div class="mockup-dot"></div>
+          </div>
+        </div>
+        <div class="mockup-body">
+          <div class="mock-stat-row">
+            <div class="mock-stat"><div class="v">3</div><div class="l">Open</div></div>
+            <div class="mock-stat"><div class="v">$5.2k</div><div class="l">Budget</div></div>
+            <div class="mock-stat"><div class="v">9/10</div><div class="l">Eligible</div></div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-icon green">✓</div>
+            <div class="mock-text">
+              <div class="mock-text-1">Tournament Entry Approved</div>
+              <div class="mock-text-2">Dallas Spring 7s · $450</div>
+            </div>
+            <span class="mock-badge green">APPROVED</span>
+          </div>
+          <div class="mock-row">
+            <div class="mock-icon amber">!</div>
+            <div class="mock-text">
+              <div class="mock-text-1">Hotel Lodging</div>
+              <div class="mock-text-2">Needs hotel preference</div>
+            </div>
+            <span class="mock-badge amber">NEEDS INFO</span>
+          </div>
+          <div class="mock-row">
+            <div class="mock-icon purple">📋</div>
+            <div class="mock-text">
+              <div class="mock-text-1">Equipment Restock</div>
+              <div class="mock-text-2">Submitted 2 hrs ago</div>
+            </div>
+            <span class="mock-badge amber">REVIEW</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── WHY ─── -->
+<section class="why" id="why">
+  <div class="container">
+    <div class="section-tag">Why I built this</div>
+    <h2 class="section-title">Every semester, the <span class="accent">same problem.</span></h2>
+
+    <div class="why-grid">
+      <div class="why-prose">
+        <p>I am the president of TCU Rugby. Every semester, getting a purchase request approved means drafting an email, attaching whatever documents I think are needed, and waiting — sometimes for days — with no way to check whether anyone has seen it. <strong>Emails get lost. Replies do not come. What should be a simple process turns into five back-and-forth emails over two weeks.</strong></p>
+        <p>I have heard the same complaints from officers of other competitive sports clubs at TCU. The process is confusing, requirements are not centralized, and there is no way to check the status of anything without sending another email. Game roster approvals, travel requests, budget check-ins — all of it runs through individual inboxes.</p>
+        <p>It is not just frustrating for students. The Rec Center staff deal with their own version of the same problem: clubs submit incomplete information, staff have to ask repeatedly for the same documents, and keeping clubs updated on their budget balances requires manually maintaining spreadsheets and emailing them around.</p>
+        <p>FrogFlow is my attempt to solve that — to give this information a place to live, structured around how club sports actually work. Built specifically for TCU.</p>
+      </div>
+      <aside class="pull-quote">
+        <div class="pull-quote-mark">"</div>
+        <div class="pull-quote-text">Streamlining budget tracking and SGA funding workflows is something we want to do.</div>
+        <div class="pull-quote-attr">Zack Lundgren</div>
+        <div class="pull-quote-attr-sub">TCU Campus Recreation Center</div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DATA ─── -->
+<section class="data">
+  <div class="container">
+    <div class="section-tag">Under the hood</div>
+    <h2 class="section-title">The data behind the <span class="accent">prototype.</span></h2>
+    <p class="section-lede">FrogFlow is built on a structured relational data model designed specifically for the TCU Club Sports context — separating operational and restricted funds, tracking eligibility per player, and maintaining a permanent audit trail of every approval.</p>
+
+    <div class="data-grid">
+      <div class="data-card">
+        <div class="data-card-head">
+          <div class="data-card-num">18</div>
+          <div class="data-card-label">Tables</div>
+        </div>
+        <h3>A relational data model from scratch</h3>
+        <p>Designed in collaboration with ChatGPT through a structured interview process, the data model captures clubs, users, requests, approvals, ledger transactions, roster players, events, and form submissions. Each table has explicit data types and relationships built around how club sports actually operate.</p>
+      </div>
+      <div class="data-card">
+        <div class="data-card-head">
+          <div class="data-card-num">2</div>
+          <div class="data-card-label">Fund Types</div>
+        </div>
+        <h3>Operational vs. Restricted budgets</h3>
+        <p>The financial model mirrors the real distinction TCU Club Sports uses. Operational funds (from SGA allocations and dues) must be spent within the fiscal year. Restricted funds (from donations) carry over but can only be used for designated purposes. The app tracks both separately in real time.</p>
+      </div>
+      <div class="data-card">
+        <div class="data-card-head">
+          <div class="data-card-num">9</div>
+          <div class="data-card-label">Versions</div>
+        </div>
+        <h3>Iterative prototype development</h3>
+        <p>Built across nine versions of iteration, each one fixing what didn't work and adding what was missing. The major revisions added a cross-club staff dashboard, an approval confirmation flow with budget impact visibility, and a fully responsive desktop layout with sidebar navigation.</p>
+      </div>
+      <div class="data-card">
+        <div class="data-card-head">
+          <div class="data-card-num">~50</div>
+          <div class="data-card-label">Sample Records</div>
+        </div>
+        <h3>Realistic simulated data</h3>
+        <p>The prototype runs on simulated data designed to look and behave like real TCU Club Sports operations — five clubs, dozens of purchase requests at various approval stages, populated rosters with mixed eligibility statuses, and a full ledger of historical transactions. Enough to demonstrate every feature end-to-end.</p>
+      </div>
+    </div>
+
+    <div class="data-tables">
+      <h4>Sample of the 18-table data model</h4>
+      <div class="tables-list">
+        <div class="table-chip">users</div>
+        <div class="table-chip">clubs</div>
+        <div class="table-chip">memberships</div>
+        <div class="table-chip">purchase_requests</div>
+        <div class="table-chip">approvals</div>
+        <div class="table-chip">ledger_transactions</div>
+        <div class="table-chip">budget_allocations</div>
+        <div class="table-chip">roster_players</div>
+        <div class="table-chip">eligibility_records</div>
+        <div class="table-chip">waivers</div>
+        <div class="table-chip">medical_clearances</div>
+        <div class="table-chip">events</div>
+        <div class="table-chip">travel_requests</div>
+        <div class="table-chip">form_submissions</div>
+        <div class="table-chip">notifications</div>
+        <div class="table-chip">policies</div>
+        <div class="table-chip">staff_notes</div>
+        <div class="table-chip">audit_log</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FEATURES ─── -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-tag">What it does</div>
+    <h2 class="section-title">Built for both sides of <span class="accent">the relationship.</span></h2>
+    <p class="section-lede">FrogFlow has two distinct experiences — one designed for student club officers running day-to-day operations, and one for Rec Center staff who need cross-club oversight.</p>
+
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon">📋</div>
+        <h3>Purchase Requests</h3>
+        <p>Six request types — equipment, tournament fees, hotel and travel, coach pay, referee fees, and medical supplies — each with tailored forms. Required fields enforced at submission so incomplete requests never reach staff.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">💰</div>
+        <h3>Live Budget Tracking</h3>
+        <p>Operational and Restricted balances updated in real time. Full transaction ledger tied to specific approvals. No more emailing staff for an updated spreadsheet — the current balance is always one click away.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">👥</div>
+        <h3>Roster Eligibility</h3>
+        <p>Per-player tracking of liability waivers and medical clearance. Players missing required documents are flagged automatically. No more manually cross-referencing rosters against form submissions.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📊</div>
+        <h3>Staff Cross-Club Dashboard</h3>
+        <p>For Rec Center staff: every club at a glance. Prioritized approval queue across all clubs, club health cards showing budget status, and a spending breakdown by category.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">✅</div>
+        <h3>Approval Confirmation Flow</h3>
+        <p>Before any approval is posted, staff see the current balance, the deduction amount, and the projected balance after approval — with a low-balance warning if funds drop below $500. Auto-posts to the ledger.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔔</div>
+        <h3>Notifications Center</h3>
+        <p>Instant alerts when requests are submitted, approved, denied, or sent back for more information. No more wondering whether an email got through. Status changes are visible the moment they happen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ROADMAP ─── -->
+<section class="roadmap" id="roadmap">
+  <div class="container">
+    <div class="section-tag">What's next</div>
+    <h2 class="section-title">From prototype to <span class="accent">production.</span></h2>
+    <p class="section-lede">The current prototype is a functional, interactive demonstration. The path forward is concrete: validate with the Rec Center, build a real backend, and expand from there.</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-num">1</div>
+        <div class="tl-content">
+          <div class="tl-meta">In Progress</div>
+          <h3>Get formal approval from a major university</h3>
+          <p>The first real milestone is institutional buy-in — ideally from TCU. I have already started conversations with Zack Lundgren at the Campus Recreation Center, and the response has been positive. The next step is a formal demo meeting and a pilot conversation about what it would take to bring FrogFlow into the Club Sports program officially.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-num">2</div>
+        <div class="tl-content">
+          <div class="tl-meta">Planned</div>
+          <h3>Build the production backend</h3>
+          <p>Once the project has institutional support, the prototype moves from in-memory simulated data to a real, persistent backend. I have already begun looking at <strong>Lovable</strong> as the development platform and <strong>Supabase</strong> as the backend database. The architecture stays independent of TCU's internal systems — Okta SSO would be the only integration, used purely for outbound authentication.</p>
+        </div>
+      </div>
+      <div class="tl-item gold">
+        <div class="tl-num">3</div>
+        <div class="tl-content">
+          <div class="tl-meta">Future Vision</div>
+          <h3>Expand beyond Club Sports</h3>
+          <p>The structural problem FrogFlow solves — fragmented administrative workflows running through email and spreadsheets — is not unique to club sports. Greek life, student government, intramurals, and other student-run organizations face the same challenges. The data model is generic enough that with modest customization, FrogFlow could expand to support other parts of student life at TCU and eventually other universities.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── RESEARCH / CITATIONS ─── -->
+<section class="research" id="research">
+  <div class="container">
+    <div class="section-tag">Grounded in research</div>
+    <h2 class="section-title">A documented <span class="accent">institutional gap.</span></h2>
+    <p class="research-intro">The administrative challenges TCU competitive sports clubs face are not unique. Academic research on collegiate sport clubs (CSCs) consistently identifies <strong>communication gaps, leadership turnover, informal governance structures, and limited administrative support</strong> as some of the biggest barriers to effective club operations. FrogFlow is designed to address those structural problems directly.</p>
+
+    <div class="citations">
+      <div class="citation">
+        <div class="citation-num">1</div>
+        <div class="citation-body">
+          <p><strong>Springer, D., & Dixon, M. A. (2025).</strong> Deconstructing the structure of collegiate sport clubs. <em>Recreational Sports Journal.</em></p>
+          <p>Found that clubs operate with simple, flexible structures characterized by centralized decision-making, limited complexity, and informal coordination — dynamics that foster autonomy but challenge leadership sustainability across transitions.</p>
+          <a href="https://journals.sagepub.com/doi/10.1177/15588661251344898" class="citation-link" target="_blank" rel="noopener">journals.sagepub.com/doi/10.1177/15588661251344898</a>
+        </div>
+      </div>
+
+      <div class="citation">
+        <div class="citation-num">2</div>
+        <div class="citation-body">
+          <p><strong>Czekanski, W. A., & Lower-Hoppe, L. M. (2024).</strong> The role of external partners in shaping the organizational capacity of collegiate sport clubs: A Delphi study. <em>European Sport Management Quarterly.</em></p>
+          <p>Identified that CSCs struggle to achieve their goals because of unique challenges in the collegiate context, including membership restrictions, university regulation, and the need for effective communication between clubs and recreational sport departments.</p>
+          <a href="https://www.tandfonline.com/doi/full/10.1080/16184742.2024.2412647" class="citation-link" target="_blank" rel="noopener">tandfonline.com/doi/full/10.1080/16184742.2024.2412647</a>
+        </div>
+      </div>
+
+      <div class="citation">
+        <div class="citation-num">3</div>
+        <div class="citation-body">
+          <p><strong>Lower-Hoppe, L. M., et al. (2021).</strong> The collegiate sport club model: Development of a conceptual framework. <em>International Journal of Sport Management, 22</em>(3).</p>
+          <p>Empirically defined the CSC model using qualitative data from 68 sport club officers, four recreational sport professional staff, and 29 university documents. Highlighted the connections between club purposes, inputs, activities, and outcomes — a framework FrogFlow's data model is structured around.</p>
+          <a href="https://internationaljournalofsportmanagement.com/the-collegiate-sport-club-model-development-of-a-conceptual-framework/" class="citation-link" target="_blank" rel="noopener">internationaljournalofsportmanagement.com/the-collegiate-sport-club-model</a>
+        </div>
+      </div>
+
+      <div class="citation">
+        <div class="citation-num">4</div>
+        <div class="citation-body">
+          <p><strong>Journal of Park and Recreation Administration (2024).</strong> Collegiate sport club service delivery: Moving between motivations and constraints to beneficial outcomes.</p>
+          <p>Identified leadership turnover, communication gaps, and lack of structured knowledge as primary constraints on participant experience in collegiate club sports. Recommended that managers create opportunities to overcome these challenges through better systems and information flow.</p>
+          <a href="https://js.sagamorepub.com/index.php/jpra/article/view/11046" class="citation-link" target="_blank" rel="noopener">js.sagamorepub.com/index.php/jpra/article/view/11046</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ─── -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <h2>See FrogFlow <span class="accent">in action.</span></h2>
+    <p>The prototype is live and fully interactive. Submit a purchase request, switch to staff view, approve it, and watch the budget update in real time.</p>
+    <div class="cta-buttons">
+      <a href="https://colbyreynoldstcu.github.io/FrogFlow/app" class="btn primary">
+        Try the App <span class="arrow">→</span>
+      </a>
+      <a href="https://github.com/colbyreynoldstcu/FrogFlow" class="btn secondary">
+        View on GitHub
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <strong>FrogFlow</strong> — TCU Competitive Sports Club Management
+    <div class="footer-divider"></div>
+    Built by <a href="mailto:colby.reynolds@tcu.edu">Colby Reynolds</a> · TCU '26 · Spring 2026
+  </div>
+</footer>
+</main>
+</body>
+</html>
